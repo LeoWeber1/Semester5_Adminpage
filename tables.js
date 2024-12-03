@@ -1,303 +1,316 @@
-// Global variables
-let users = [];
-let charts = {
-    temperature: null,
-    login: null,
-    monthly: null
-};
+(function() {
+    if (window.userTableInitialized) return;
+    window.userTableInitialized = true;
 
-// Utility Functions
-const formatDate = date => new Date(date).toLocaleDateString();
-const calculateAverage = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
+    const ROLES = ['User', 'Admin', 'Manager', 'Support', 'Developer'];
 
-// Chart Initialization
-function initializeCharts() {
-    // Temperature Chart
-    charts.temperature = new Chart(document.getElementById('temperatureChart').getContext('2d'), {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'Average Temperature (°C)',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                data: [],
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    min: 36,
-                    max: 38
+    // Add data processing functions
+    function updateDashboardMetrics(data) {
+        // Update total users
+        const totalUsers = data.length;
+
+        // Calculate and update average temperature
+        const avgTemp = data.reduce((sum, row) => {
+            const temp = parseFloat(row[5] || 0);
+            return sum + (isNaN(temp) ? 0 : temp);
+        }, 0) / totalUsers;
+        document.getElementById('avgTemp').textContent = `${avgTemp.toFixed(1)}°C`;
+
+        // Calculate total logins (assuming login data is in row[4])
+        const totalLogins = data.reduce((sum, row) => sum + (row[4] ? 1 : 0), 0);
+        document.getElementById('totalLogins').textContent = totalLogins;
+
+        // Update charts if they exist
+        updateCharts(data);
+    }
+
+    function updateCharts(data) {
+        // Temperature Chart
+        const tempChart = document.getElementById('temperatureChart');
+        if (tempChart) {
+            const tempData = data.map(row => parseFloat(row[4] || 0));
+            const labels = data.map(row => row[0]);
+
+            new Chart(tempChart.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Temperature',
+                        data: tempData,
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            ticks: {
+                                display: false // Hide x-axis labels
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
                 }
-            }
+            });
         }
-    });
 
-    // Login Activity Chart
-    charts.login = new Chart(document.getElementById('loginChart').getContext('2d'), {
-        type: 'bar',
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'Number of Logins',
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                data: []
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    stepSize: 1
+        // Login Chart
+        const loginChart = document.getElementById('loginChart');
+        if (loginChart) {
+            const loginData = processLoginData(data);
+            new Chart(loginChart.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['Today', 'Yesterday', 'Last Week'],
+                    datasets: [{
+                        label: 'Login Activity',
+                        data: loginData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgb(54, 162, 235)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
                 }
-            }
+            });
         }
-    });
+    }
 
-    // Monthly Report Chart
-    charts.monthly = new Chart(document.getElementById('chartOne').getContext('2d'), {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'Monthly Active Users',
-                backgroundColor: 'rgba(61, 104, 255, 0.2)',
-                borderColor: 'rgba(61, 104, 255, 1)',
-                data: [],
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
+    function processLoginData(data) {
+        // Simulate login distribution for demonstration
+        return [
+            Math.floor(data.length * 0.4), // Today
+            Math.floor(data.length * 0.3), // Yesterday
+            Math.floor(data.length * 0.3)  // Last Week
+        ];
+    }
+
+    function showNotification(message, type = 'success') {
+        const existingNotification = document.querySelector('.notification-toast');
+        if (existingNotification) {
+            existingNotification.remove();
         }
-    });
-}
 
-// Data Processing Functions
-function processTemperatureData(users) {
-    const dates = [...new Set(users.map(user => user.lastLogin))].sort();
-    const tempData = dates.map(date => {
-        const dayUsers = users.filter(user => user.lastLogin === date);
-        return calculateAverage(dayUsers.map(user => parseFloat(user.temperature)));
-    });
-    return { dates, tempData };
-}
+        const notification = document.createElement('div');
+        notification.className = `notification-toast fixed top-4 right-4 px-6 py-3 rounded-lg text-white ${
+            type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        } shadow-lg transform transition-transform duration-300 ease-in-out z-50`;
+        notification.textContent = message;
 
-function processLoginData(users) {
-    const dates = [...new Set(users.map(user => user.lastLogin))].sort();
-    const loginCounts = dates.map(date =>
-        users.filter(user => user.lastLogin === date).length
-    );
-    return { dates, loginCounts };
-}
+        document.body.appendChild(notification);
 
-function processMonthlyData(users) {
-    const monthlyData = users.reduce((acc, user) => {
-        const month = new Date(user.lastLogin).toLocaleString('default', { month: 'short' });
-        acc[month] = (acc[month] || 0) + 1;
-        return acc;
-    }, {});
-    return {
-        months: Object.keys(monthlyData),
-        counts: Object.values(monthlyData)
-    };
-}
+        setTimeout(() => {
+            notification.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                notification.style.transform = 'translateY(-20px)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }, 100);
+    }
 
-// Update Functions
-function updateCharts() {
-    const tempData = processTemperatureData(users);
-    const loginData = processLoginData(users);
-    const monthlyData = processMonthlyData(users);
+    function handleRoleChange(event) {
+        const select = event.target;
+        const rowIndex = select.dataset.rowIndex;
+        const newRole = select.value;
 
-    // Update Temperature Chart
-    charts.temperature.data.labels = tempData.dates;
-    charts.temperature.data.datasets[0].data = tempData.tempData;
-    charts.temperature.update();
+        const row = select.closest('tr');
+        row.classList.add('bg-blue-50');
+        setTimeout(() => row.classList.remove('bg-blue-50'), 500);
 
-    // Update Login Chart
-    charts.login.data.labels = loginData.dates;
-    charts.login.data.datasets[0].data = loginData.loginCounts;
-    charts.login.update();
+        showNotification('Role updated successfully!', 'success');
+    }
 
-    // Update Monthly Chart
-    charts.monthly.data.labels = monthlyData.months;
-    charts.monthly.data.datasets[0].data = monthlyData.counts;
-    charts.monthly.update();
+    function createRoleSelect(currentRole, rowIndex) {
+        currentRole = ROLES.find(role => role.toLowerCase() === (currentRole || '').toLowerCase()) || ROLES[0];
 
-    // Update metrics
-    document.getElementById('totalUsers').textContent = users.length;
-    document.getElementById('avgTemp').textContent =
-        `${calculateAverage(users.map(u => parseFloat(u.temperature))).toFixed(1)}°C`;
-    document.getElementById('totalLogins').textContent =
-        loginData.loginCounts.reduce((a, b) => a + b, 0);
-}
+        const select = document.createElement('select');
+        select.className = 'px-3 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500';
+        select.dataset.rowIndex = rowIndex;
 
-// Table Functions
-function updateTable(filteredUsers = users) {
-    const tbody = document.querySelector('tbody');
-    tbody.innerHTML = '';
-
-    filteredUsers.forEach((user, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 h-10 w-10">
-                        <img class="h-10 w-10 rounded-full" src="${user.image || 'https://via.placeholder.com/150'}" alt="">
-                    </div>
-                    <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-900">${user.firstName} ${user.lastName}</div>
-                    </div>
-                    </div>
-                </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.phone}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.email}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(user.lastLogin)}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.temperature}°C</td>
-            <td class="px-6 py-4 whitespace-nowrap">
-                <select onchange="updateUserRole(${index}, this.value)" 
-                        class="text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
-                    <option value="Manager" ${user.role === 'Manager' ? 'selected' : ''}>Manager</option>
-                    <option value="Developer" ${user.role === 'Developer' ? 'selected' : ''}>Developer</option>
-                    <option value="Designer" ${user.role === 'Designer' ? 'selected' : ''}>Designer</option>
-                    <option value="Tester" ${user.role === 'Tester' ? 'selected' : ''}>Tester</option>
-                </select>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-}
-
-// Search functionality
-function setupSearch() {
-    const searchInput = document.getElementById('searchInput');
-    searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        const filteredUsers = users.filter(user =>
-            user.firstName.toLowerCase().includes(searchTerm) ||
-            user.lastName.toLowerCase().includes(searchTerm) ||
-            user.email.toLowerCase().includes(searchTerm) ||
-            user.role.toLowerCase().includes(searchTerm)
-        );
-        updateTable(filteredUsers);
-    });
-}
-
-// Role update function
-function updateUserRole(index, newRole) {
-    users[index].role = newRole;
-    updateTable();
-    updateCharts();
-
-    // You might want to send this update to your backend
-    console.log(`Updated role for ${users[index].firstName} ${users[index].lastName} to ${newRole}`);
-}
-
-// Data fetching and initialization
-async function fetchAndProcessUserData() {
-    try {
-        const response = await fetch('names.csv');
-        const csvText = await response.text();
-
-        // Parse CSV data
-        const results = Papa.parse(csvText, {
-            header: true,
-            skipEmptyLines: true,
-            transform: (value, field) => {
-                // Transform field names to camelCase and clean up data
-                switch(field) {
-                    case 'First Name':
-                        return value.trim();
-                    case 'Last Name':
-                        return value.trim();
-                    case 'Temperature':
-                        return parseFloat(value) || 37.0;
-                    default:
-                        return value;
-                }
-            }
+        ROLES.forEach(role => {
+            const option = document.createElement('option');
+            option.value = role.toLowerCase();
+            option.textContent = role;
+            option.selected = role.toLowerCase() === currentRole.toLowerCase();
+            select.appendChild(option);
         });
 
-        // Transform the data to match our expected format
-        users = results.data.map(row => ({
-            firstName: row['First Name'],
-            lastName: row['Last Name'],
-            email: row['Email'],
-            phone: row['Phone'],
-            role: row['Role'] || 'User',
-            lastLogin: row['Last Login'],
-            temperature: row['Temperature'],
-            image: row['Image'] || 'https://via.placeholder.com/150'
-        }));
-
-        // Initialize everything
-        updateTable();
-        updateCharts();
-    } catch (error) {
-        console.error('Error fetching or processing data:', error);
-        // Show error message to user
-        alert('Error loading user data. Please try again later.');
+        select.addEventListener('change', handleRoleChange);
+        return select;
     }
-}
 
-// Error handling function
-function handleError(error, context) {
-    console.error(`Error in ${context}:`, error);
-    // You could implement more sophisticated error handling here
-    const errorMessage = document.createElement('div');
-    errorMessage.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative';
-    errorMessage.role = 'alert';
-    errorMessage.innerHTML = `
-        <strong class="font-bold">Error!</strong>
-        <span class="block sm:inline"> ${context}: ${error.message}</span>
-    `;
-    document.querySelector('main').prepend(errorMessage);
-}
+    async function fetchNamesData(filePath) {
+        try {
+            const response = await fetch(filePath);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const csvText = await response.text();
 
-// Initialize everything when the DOM is loaded
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        initializeCharts();
-        setupSearch();
-        await fetchAndProcessUserData();
-    } catch (error) {
-        handleError(error, 'Initialization');
+            // Use PapaParse for more reliable CSV parsing
+            const result = Papa.parse(csvText, {
+                header: false,
+                skipEmptyLines: true
+            });
+
+            return {
+                headers: result.data[0],
+                dataRows: result.data.slice(1)
+            };
+        } catch (error) {
+            console.error('Error fetching or parsing CSV:', error);
+            showNotification('Error loading data: ' + error.message, 'error');
+            return { headers: [], dataRows: [] };
+        }
     }
-});
 
-// Window resize handler for chart responsiveness
-window.addEventListener('resize', () => {
-    Object.values(charts).forEach(chart => chart.resize());
-});
 
-// Optional: Add event listener for theme toggle if you implement dark mode
-document.addEventListener('theme-change', () => {
-    // Update chart themes
-    Object.values(charts).forEach(chart => {
-        chart.options.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'default';
-        chart.update();
-    });
-});
+    function setupSearch() {
+        const searchInput = document.getElementById('searchInput');
+        if (!searchInput) {
+            console.error('Search input not found');
+            return;
+        }
 
-// Optional: Export functions for testing
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        processTemperatureData,
-        processLoginData,
-        processMonthlyData,
-        calculateAverage,
-        formatDate
-    };
-}
+        let debounceTimeout;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(() => {
+                const searchTerm = e.target.value.toLowerCase();
+                const rows = document.querySelectorAll('tbody tr');
+
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(searchTerm) ? '' : 'none';
+                });
+            }, 300);
+        });
+    }
+
+    function createEnhancedTable(headers, dataRows) {
+        const tableBody = document.querySelector('tbody.bg-white.divide-y');
+        if (!tableBody) {
+            showNotification('Table body element not found', 'error');
+            return;
+        }
+
+        tableBody.innerHTML = '';
+
+        dataRows.forEach((row, rowIndex) => {
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-gray-50 transition-colors duration-150';
+
+            // Assuming CSV structure: name,phone,email,login,temp,role
+            const cells = [
+                row[0] || '', // Name
+                row[1] || '', // Phone
+                row[2] || '', // Email
+                row[3] || '', // Login
+                row[4] || '', // Temperature
+                row[5] || ''  // Role
+            ];
+
+            cells.forEach((cellValue, index) => {
+                const td = document.createElement('td');
+                td.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-900';
+
+                switch(index) {
+                    case 1: // Phone
+                        const phoneLink = document.createElement('a');
+                        phoneLink.href = `tel:${cellValue}`;
+                        phoneLink.className = 'text-blue-600 hover:text-blue-800';
+                        phoneLink.textContent = cellValue;
+                        td.appendChild(phoneLink);
+                        break;
+
+                    case 2: // Email
+                        const emailLink = document.createElement('a');
+                        emailLink.href = `mailto:${cellValue}`;
+                        emailLink.className = 'text-blue-600 hover:text-blue-800';
+                        emailLink.textContent = cellValue;
+                        td.appendChild(emailLink);
+                        break;
+
+                    case 4: // Temperature
+                        const temp = parseFloat(cellValue);
+                        td.className += temp >= 39 ? ' text-red-600' : ' text-green-600';
+                        td.textContent = `${cellValue}°C`;
+                        break;
+
+                    case 5: // Role
+                        td.appendChild(createRoleSelect(cellValue, rowIndex));
+                        break;
+
+                    default:
+                        td.textContent = cellValue;
+                }
+
+                tr.appendChild(td);
+            });
+
+            tableBody.appendChild(tr);
+        });
+
+        // Update dashboard metrics after table is created
+        updateDashboardMetrics(dataRows);
+    }
+
+    async function initializeEnhancedTable(csvPath) {
+        const tableContainer = document.querySelector('.overflow-x-auto');
+        if (!tableContainer) {
+            showNotification('Table container not found', 'error');
+            return;
+        }
+
+        const tbody = document.querySelector('tbody');
+        if (tbody) {
+            const loadingRow = document.createElement('tr');
+            loadingRow.innerHTML = '<td colspan="6" class="px-6 py-4 text-center">Loading...</td>';
+            tbody.innerHTML = '';
+            tbody.appendChild(loadingRow);
+        }
+
+        try {
+            const { headers, dataRows } = await fetchNamesData(csvPath);
+            console.log('Headers:', headers, 'Data Rows:', dataRows);
+            if (headers && dataRows) {
+                createEnhancedTable(headers, dataRows);
+                setupSearch();
+                updateCharts(dataRows); // Ensure charts are updated with the data
+            } else {
+                console.log("Error loading data");
+            }
+        } catch (error) {
+            console.error('Error initializing table:', error);
+        }
+    }
+
+
+    // Initialize when DOM is ready
+    function init() {
+        initializeEnhancedTable('names.csv');
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+(function () {
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    if (!loggedInUser) {
+        window.location.href = 'login.html'; // Redirect to login if not logged in
+    }
+})();

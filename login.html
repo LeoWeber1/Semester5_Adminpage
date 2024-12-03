@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .font-family-karla { font-family: karla; }
+        .bg-login { background: #3d68ff; }
+    </style>
+</head>
+<body class="bg-login font-family-karla h-screen flex justify-center items-center">
+<div class="bg-white p-8 rounded-lg shadow-lg w-96">
+    <h2 class="text-2xl font-bold text-gray-700 mb-4">Login</h2>
+    <form id="loginForm" class="space-y-4">
+        <div>
+            <label class="block text-gray-600 mb-1">Username</label>
+            <input type="text" id="username" class="w-full p-2 border rounded-md" required>
+        </div>
+        <div>
+            <label class="block text-gray-600 mb-1">Password</label>
+            <input type="password" id="password" class="w-full p-2 border rounded-md" required>
+        </div>
+        <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Login</button>
+    </form>
+    <div id="loginMessage" class="mt-4 text-center text-red-500 hidden"></div>
+</div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script src="login.js"></script>
+</html>

@@ -37,6 +37,9 @@
             <i class="fas fa-table mr-3"></i>
             Tables
         </a>
+        <footer class="w-full  text-right p-2 flex ">
+            <button id="logout" class="bg-red-500 text-white px-6 py-3 mb-4 rounded-md">Logout</button>
+        </footer>
     </nav>
 </aside>
 
@@ -46,7 +49,6 @@
         <div class="w-1/2"></div>
         <div class="relative w-1/2 flex justify-end">
             <button class="relative p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:bg-gray-100 focus:text-gray-600 rounded-full">
-                <span class="absolute top-0 right-0 h-2 w-2 mt-1 mr-2 bg-red-500 rounded-full"></span>
                 <span class="absolute top-0 right-0 h-2 w-2 mt-1 mr-2 bg-red-500 rounded-full animate-ping"></span>
                 <i class="fas fa-bell"></i>
             </button>
@@ -118,12 +120,6 @@
                 </div>
             </div>
 
-            <!-- Monthly Report Chart -->
-            <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-                <h2 class="text-xl font-semibold mb-4">Monthly Reports</h2>
-                <canvas id="chartOne" width="400" height="200"></canvas>
-            </div>
-
             <!-- Users Table -->
             <div class="bg-white rounded-lg shadow-sm overflow-hidden">
                 <div class="p-6">
@@ -159,6 +155,12 @@
         </footer>
     </div>
 </div>
+<script>
+    document.getElementById('logout').addEventListener('click', () => {
+        localStorage.removeItem('loggedInUser');
+        window.location.href = 'index.html'; // Redirect to login
+    });
+</script>
 
 <!-- Required Scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
