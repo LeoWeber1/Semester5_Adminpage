@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+            rel="stylesheet"
+    />
+    <style>
+        .font-family-karla {
+            font-family: karla;
+        }
+        .bg-login {
+            background: #3d68ff;
+        }
+    </style>
+</head>
+<body class="bg-login font-family-karla h-screen flex justify-center items-center">
+<div class="bg-white p-8 rounded-lg shadow-lg w-96">
+    <h2 class="text-2xl font-bold text-gray-700 mb-4">Login or Register</h2>
+    <form id="loginForm" class="flex flex-col space-y-2">
+        <input
+                id="username"
+                type="text"
+                placeholder="Username"
+                required
+                class="border p-2"
+        />
+        <input
+                id="password"
+                type="password"
+                placeholder="Password"
+                required
+                class="border p-2"
+        />
+        <button
+                id="loginBtn"
+                type="submit"
+                class="bg-blue-500 text-white py-2 rounded-md hover:bg-blue-700"
+        >
+            Login
+        </button>
+        <button
+                id="registerBtn"
+                type="button"
+                class="bg-green-500 text-white py-2 rounded-md hover:bg-green-700"
+        >
+            Register
+        </button>
+        <p id="loginMessage" class="hidden text-red-500 font-semibold"></p>
+    </form>
+</div>
+
+<script src="login.js" defer></script>
+</body>
+</html>

@@ -1,12 +1,16 @@
 {
-  "name": "5semester",
+  "name": "website-project",
   "version": "1.0.0",
-  "main": "index.html",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
   "scripts": {
-    "start": "live-server --open=index.html",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  }
 }
