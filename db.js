@@ -1,13 +1,16 @@
 import pg from 'pg';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 const { Pool } = pg;
 
-// Update credentials with yours
 const pool = new Pool({
-    user: 'leopoldweber',     // PostgreSQL username
-    host: 'localhost',        // Host
-    database: 'my_local_db',  // Database name
-    password: 'my_password',  // PostgreSQL password
-    port: 5432,               // Default PostgreSQL port
+    user: process.env.DB_USER || 'leopoldweber',     // PostgreSQL username
+    host: process.env.DB_HOST || 'localhost',       // Host
+    database: process.env.DB_NAME || 'my_local_db', // Database name
+    password: process.env.DB_PASSWORD || 'my_password', // PostgreSQL password
+    port: parseInt(process.env.DB_PORT, 10) || 5432,    // PostgreSQL port
 });
 
 pool.on('error', (err) => {

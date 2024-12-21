@@ -1,9 +1,34 @@
 import express from 'express';
-import cors from 'cors';
-import pool from './db.js'; // PostgreSQL connection
+import dotenv from 'dotenv';
+import { exec } from 'child_process';
+import pool from './db.js';
+
+dotenv.config();
 
 const app = express();
-const PORT = 3000;
+app.use(express.json());
+
+// Auto-load SQL file to initialize the database (if not already initialized)
+const initializeDB = () => {
+    const dbFile = './db.sql';
+    exec(`psql -U ${process.env.DB_USER} -d ${process.env.DB_NAME} -f ${dbFile}`, (err, stdout, stderr) => {
+        if (err) {
+            console.error(`Error initializing database: ${stderr}`);
+        } else {
+            console.log('Database initialized successfully');
+        }
+    });
+};
+
+initializeDB();
+
+app.get('/', (req, res) => {
+    res.send('Server is running!');
+});
+
+app.listen(3000, () => {
+    console.log('Server is running on http://localhost:3000');
+});
 
 // Middleware
 app.use(cors());
