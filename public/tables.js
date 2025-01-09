@@ -70,7 +70,6 @@ async function displayEmployees() {
  */
 function displayMetrics(employees) {
     // Total users
-    document.getElementById('totalUsers').textContent = employees.length;
 
     // Average temperature
     const temps = employees
@@ -79,11 +78,9 @@ function displayMetrics(employees) {
     const avgTemp = temps.length
         ? (temps.reduce((a, b) => a + b, 0) / temps.length).toFixed(1)
         : 0;
-    document.getElementById('avgTemp').textContent = `${avgTemp}°C`;
 
     // Total logins (example: counting any non-null last_login)
     const totalLogins = employees.filter((emp) => emp.last_login).length;
-    document.getElementById('totalLogins').textContent = totalLogins;
 }
 
 /**
@@ -113,62 +110,100 @@ function setupSearch() {
  *    This is just a placeholder. Customize as needed.
  */
 function renderCharts(employees) {
-    // 5.1) Temperature Trend Chart
+    // 1. Temperature Distribution Chart
     const tempCtx = document.getElementById('temperatureChart')?.getContext('2d');
     if (tempCtx) {
-        const temps = employees
-            .filter(emp => emp.temperature !== null)
-            .map(emp => parseFloat(emp.temperature));
+        // Group temperatures into ranges
+        const tempRanges = {
+            'Normal (<37.5°C)': 0,
+            'Elevated (37.5-38.5°C)': 0,
+            'Fever (38.5-39.5°C)': 0,
+            'High Fever (>39.5°C)': 0
+        };
 
-        // Example: simple line chart of all temperatures
+        employees.forEach(emp => {
+            const temp = parseFloat(emp.temperature);
+            if (temp < 37.5) tempRanges['Normal (<37.5°C)']++;
+            else if (temp < 38.5) tempRanges['Elevated (37.5-38.5°C)']++;
+            else if (temp < 39.5) tempRanges['Fever (38.5-39.5°C)']++;
+            else tempRanges['High Fever (>39.5°C)']++;
+        });
+
         new Chart(tempCtx, {
-            type: 'line',
+            type: 'bar',
             data: {
-                labels: temps.map((_, i) => i + 1), // 1..N
+                labels: Object.keys(tempRanges),
                 datasets: [{
-                    label: 'Temperatures',
-                    data: temps,
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    fill: false,
+                    label: 'Number of Employees',
+                    data: Object.values(tempRanges),
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.6)',  // green
+                        'rgba(255, 206, 86, 0.6)',  // yellow
+                        'rgba(255, 159, 64, 0.6)',  // orange
+                        'rgba(255, 99, 132, 0.6)'   // red
+                    ],
+                    borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
                 scales: {
-                    xAxes: [{ display: true }],
-                    yAxes: [{ display: true }]
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Temperature Distribution'
+                    }
                 }
             }
         });
     }
 
-    // 5.2) Login Activity Chart
-    const loginCtx = document.getElementById('loginChart')?.getContext('2d');
-    if (loginCtx) {
-        // Example: count how many employees have last_login set
-        const withLogins = employees.filter(emp => emp.last_login).length;
-        const withoutLogins = employees.length - withLogins;
+    // 2. Role Distribution Chart (replacing login chart)
+    const roleCtx = document.getElementById('loginChart')?.getContext('2d');
+    if (roleCtx) {
+        // Count employees by role
+        const roleCount = employees.reduce((acc, emp) => {
+            acc[emp.role] = (acc[emp.role] || 0) + 1;
+            return acc;
+        }, {});
 
-        new Chart(loginCtx, {
-            type: 'pie',
+        new Chart(roleCtx, {
+            type: 'doughnut',
             data: {
-                labels: ['Logged In Before', 'Never Logged In'],
+                labels: Object.keys(roleCount),
                 datasets: [{
-                    data: [withLogins, withoutLogins],
+                    data: Object.values(roleCount),
                     backgroundColor: [
                         'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)'
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(255, 99, 132, 0.6)'
                     ]
                 }]
             },
             options: {
                 responsive: true,
-                legend: { position: 'bottom' }
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Employee Role Distribution'
+                    }
+                }
             }
         });
     }
-}
 
+    // Update metrics display
+    const avgTemp = employees.reduce((sum, emp) => sum + parseFloat(emp.temperature), 0) / employees.length;
+    document.getElementById('avgTemp').textContent = `${avgTemp.toFixed(1)}°C`;
+}
 /**
  * 6) Initialize everything on DOM load
  */

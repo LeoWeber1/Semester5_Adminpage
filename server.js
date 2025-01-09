@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { exec } from 'child_process';
 import pool from './db.js';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ const initializeDB = () => {
 initializeDB();
 
 app.get('/', (req, res) => {
-    res.send('Server is running!');
+    res.send('Server is running! Go to /login.html to log in.');
 });
 
 app.listen(3000, () => {
@@ -129,6 +130,7 @@ app.get('/', (req, res) => {
     // By default, send the login page or dashboard
     res.sendFile('login.html', { root: './public' });
 });
+const PORT = process.env.PORT || 3001; // Use 3001 instead of 3000
 
 // ========== Start Server ==========
 app.listen(PORT, () => {

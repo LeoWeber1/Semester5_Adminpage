@@ -49,7 +49,7 @@ Follow these steps to set up and run the application locally.
    ```
 
 2. **Access the application**:
-   Open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+   Open your browser and navigate to [http://localhost:3001/login.html](http://localhost:3001/login.html).
 
 ### Features
 
