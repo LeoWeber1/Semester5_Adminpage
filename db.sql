@@ -21,7 +21,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: employees; Type: TABLE; Schema: public; Owner: leopoldweber
+-- Name: employees; Type: TABLE; Schema: public; Owner: admin
 --
 
 CREATE TABLE public.employees (
@@ -36,10 +36,10 @@ CREATE TABLE public.employees (
 );
 
 
-ALTER TABLE public.employees OWNER TO leopoldweber;
+ALTER TABLE public.employees OWNER TO admin;
 
 --
--- Name: employees_id_seq; Type: SEQUENCE; Schema: public; Owner: leopoldweber
+-- Name: employees_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
 --
 
 CREATE SEQUENCE public.employees_id_seq
@@ -51,17 +51,17 @@ CREATE SEQUENCE public.employees_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.employees_id_seq OWNER TO leopoldweber;
+ALTER TABLE public.employees_id_seq OWNER TO admin;
 
 --
--- Name: employees_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: leopoldweber
+-- Name: employees_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
 --
 
 ALTER SEQUENCE public.employees_id_seq OWNED BY public.employees.id;
 
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: leopoldweber
+-- Name: users; Type: TABLE; Schema: public; Owner: admin
 --
 
 CREATE TABLE public.users (
@@ -71,10 +71,10 @@ CREATE TABLE public.users (
 );
 
 
-ALTER TABLE public.users OWNER TO leopoldweber;
+ALTER TABLE public.users OWNER TO admin;
 
 --
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: leopoldweber
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
 --
 
 CREATE SEQUENCE public.users_id_seq
@@ -86,31 +86,31 @@ CREATE SEQUENCE public.users_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.users_id_seq OWNER TO leopoldweber;
+ALTER TABLE public.users_id_seq OWNER TO admin;
 
 --
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: leopoldweber
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
 --
 
 ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
--- Name: employees id; Type: DEFAULT; Schema: public; Owner: leopoldweber
+-- Name: employees id; Type: DEFAULT; Schema: public; Owner: admin
 --
 
 ALTER TABLE ONLY public.employees ALTER COLUMN id SET DEFAULT nextval('public.employees_id_seq'::regclass);
 
 
 --
--- Name: users id; Type: DEFAULT; Schema: public; Owner: leopoldweber
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: admin
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
 
 
 --
--- Data for Name: employees; Type: TABLE DATA; Schema: public; Owner: leopoldweber
+-- Data for Name: employees; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
 COPY public.employees (id, first_name, last_name, phone, email, last_login, temperature, role) FROM stdin;
@@ -155,36 +155,37 @@ COPY public.employees (id, first_name, last_name, phone, email, last_login, temp
 
 
 --
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: leopoldweber
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
 COPY public.users (id, username, password) FROM stdin;
-1	admin	12345
-2	user1	password1
-3	user2	password2
-4	testuser	password123
-5	dsaf	dsaf
-6	leo	111
-7	1	1
+1	adminadmin	adminadmin
+2	admina	12345
+3	user1	password1
+4	user2	password2
+5	testuser	password123
+6	dsaf	dsaf
+7	leo	111
+8	bla	1
 \.
 
 
 --
--- Name: employees_id_seq; Type: SEQUENCE SET; Schema: public; Owner: leopoldweber
+-- Name: employees_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
 SELECT pg_catalog.setval('public.employees_id_seq', 37, true);
 
 
 --
--- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: leopoldweber
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
 SELECT pg_catalog.setval('public.users_id_seq', 7, true);
 
 
 --
--- Name: employees employees_pkey; Type: CONSTRAINT; Schema: public; Owner: leopoldweber
+-- Name: employees employees_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
 ALTER TABLE ONLY public.employees
@@ -192,7 +193,7 @@ ALTER TABLE ONLY public.employees
 
 
 --
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: leopoldweber
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
 --
 
 ALTER TABLE ONLY public.users
@@ -200,31 +201,31 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: SCHEMA public; Type: ACL; Schema: -; Owner: leopoldweber
+-- Name: SCHEMA public; Type: ACL; Schema: -; Owner: admin
 --
 
-GRANT USAGE ON SCHEMA public TO my_user;
-
-
---
--- Name: TABLE employees; Type: ACL; Schema: public; Owner: leopoldweber
---
-
-GRANT ALL ON TABLE public.employees TO my_user;
+GRANT USAGE ON SCHEMA public TO admin;
 
 
 --
--- Name: TABLE users; Type: ACL; Schema: public; Owner: leopoldweber
+-- Name: TABLE employees; Type: ACL; Schema: public; Owner: admin
 --
 
-GRANT SELECT ON TABLE public.users TO my_user;
+GRANT ALL ON TABLE public.employees TO admin;
 
 
 --
--- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: public; Owner: leopoldweber
+-- Name: TABLE users; Type: ACL; Schema: public; Owner: admin
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE leopoldweber IN SCHEMA public GRANT SELECT ON TABLES  TO my_user;
+GRANT SELECT ON TABLE public.users TO admin;
+
+
+--
+-- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: public; Owner: admin
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE admin IN SCHEMA public GRANT SELECT ON TABLES  TO admin;
 
 
 --

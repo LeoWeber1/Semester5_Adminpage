@@ -12,7 +12,22 @@ app.use(express.json());
 // Auto-load SQL file to initialize the database (if not already initialized)
 const initializeDB = () => {
     const dbFile = './db.sql';
-    exec(`psql -U ${process.env.DB_USER} -d ${process.env.DB_NAME} -f ${dbFile}`, (err, stdout, stderr) => {
+    // exec(`psql -U ${process.env.DB_USER} -d ${process.env.DB_NAME} -f ${dbFile}`, (err, stdout, stderr) => {
+    //     if (err) {
+    //         console.error(`Error initializing database: ${stderr}`);
+    //     } else {
+    //         console.log('Database initialized successfully');
+    //     }
+    // });
+    const command = `psql -U ${process.env.DB_USER} -d ${process.env.DB_NAME} -h ${process.env.DB_HOST} -p ${process.env.DB_PORT} -f ${dbFile}`;
+
+    // Umgebungsvariablen explizit setzen
+    exec(command, {
+        env: {
+            ...process.env, // Behalte vorhandene Umgebungsvariablen
+            PGPASSWORD: process.env.DB_PASSWORD, // Setze die PGPASSWORD-Variable
+        },
+    }, (err, stdout, stderr) => {
         if (err) {
             console.error(`Error initializing database: ${stderr}`);
         } else {
