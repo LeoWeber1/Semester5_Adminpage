@@ -1,0 +1,86 @@
+\documentclass[a4paper,12pt,ngerman]{article}
+
+% Pakete
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{babel} % Deutsche Sprache
+\usepackage{csquotes} % Stellt korrekte Zitatformatierung bereit
+\usepackage{cleveref}
+\usepackage{geometry} % Seitenränder anpassen
+\geometry{a4paper, left=3cm, right=3cm, top=3cm, bottom=3cm}
+\usepackage{graphicx}
+
+%\usepackage[ngerman,colorinlistoftodos]{todonotes} %Optionales Package für ToDo-Notes im kompilierten .pdf
+
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+%\bibliographystyle{plain}
+\addbibresource{literature.bib}
+
+\begin{document}
+	
+	% Deckblatt
+	\begin{titlepage}
+		\centering
+		\vspace*{1cm}
+		
+		{\LARGE \textbf{Projekttitel}}\\[1cm]
+		
+		{\large Projektdokumentation}\\[1.0cm]
+		{\large Studiengang Systems Engineering (B.~Eng.)}\\[0.3cm]
+		{\large Schwerpunkt I.2}\\[1.5cm]
+		
+		\vfill
+    
+		\textbf{Verfasser/innen:}\\[1cm]
+    	\begin{center}
+		\begin{minipage}[t]{0.45\textwidth}
+        \raggedright
+        Jan-Niclas Fenger \\
+        Matrikelnummer: 2092175 \\
+        E-Mail: jan-niclas.fenger@tha.de \\[0.5cm]
+		
+        Maria Musterfrau \\
+        Matrikelnummer: 7654321 \\
+        E-Mail: maria.musterfrau@tha.de
+		\end{minipage}
+		\hfill
+		\begin{minipage}[t]{0.45\textwidth}
+        \raggedright
+        Max Mustermann \\
+        Matrikelnummer: 1234567 \\
+        E-Mail: max.mustermann@tha.de \\[0.5cm]
+    
+        Alex Beispiel \\
+        Matrikelnummer: 1928374 \\
+        E-Mail: alex.beispiel@tha.de
+		\end{minipage}
+		\\[1.5cm]
+		\end{center}
+		
+		\textbf{Betreuer/in:}\\[0.5cm]
+		Prof. Dr. Thomas Kirchmeier\\[3cm]
+		
+		\vfill
+		
+		{\large \today}
+		
+		% Deaktivieren der Seitennummer auf dem Titelblatt
+		\thispagestyle{empty} % Keine Seitennummer anzeigen
+	\end{titlepage}
+	
+	% Inhaltsverzeichnis auf neuer Seite
+	\newpage
+	\pagenumbering{arabic} % Startet arabische Seitennummerierung
+	\setcounter{page}{2}   % Setzt die Seitenzahl auf 2
+	\tableofcontents
+	\thispagestyle{plain}  % Standard-Stil mit sichtbarer Nummer
+	
+	% Eigentlicher Inhalt
+	\newpage
+	\include{content} % Inhalt einfügen
+
+	% TODO: Bibliography einbinden, sobald Einträge vorhanden sind (im Moment Fehlerunterdrückung)
+	\addcontentsline{toc}{section}{Literatur}
+	%\printbibliography[]
+	
+\end{document}

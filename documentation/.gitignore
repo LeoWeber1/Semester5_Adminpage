@@ -1,0 +1,14 @@
+# LaTeX auxiliary files
+*.aux
+*.bbl
+*.bcf
+*.fdb_latexmk
+*.fls 
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+
+# (Optional) Exclude compiled pdf-file 
+*.pdf 
