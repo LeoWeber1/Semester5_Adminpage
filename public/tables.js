@@ -1,9 +1,9 @@
 /**
- * 1) Fetch employees from your Node/Express -> Postgres DB.
+ * Fetch employees from the backend API
  */
 async function fetchEmployees() {
     try {
-        const response = await fetch('http://localhost:3000/api/employees');
+        const response = await fetch('http://localhost:3001/api/employees');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -16,7 +16,7 @@ async function fetchEmployees() {
 }
 
 /**
- * 2) Display employees in the HTML table.
+ * Display employees in the HTML table
  */
 async function displayEmployees() {
     const employees = await fetchEmployees();
@@ -32,59 +32,61 @@ async function displayEmployees() {
         const row = document.createElement('tr');
         row.className = 'hover:bg-gray-50 transition-colors duration-150';
 
+        // Create table columns with data
         const columns = [
             `${emp.first_name || 'N/A'} ${emp.last_name || ''}`,
-            emp.phone || 'N/A',
+            emp.id_number || 'N/A',
             emp.email || 'N/A',
             emp.last_login || 'N/A',
-            emp.temperature != null ? parseFloat(emp.temperature).toFixed(1) : 'N/A',
-            emp.role || 'N/A'
+            emp.temperature != null ? `${parseFloat(emp.temperature).toFixed(1)}°C` : 'N/A',
+            emp.personal_number || 'N/A'
         ];
 
         columns.forEach((value, colIndex) => {
             const td = document.createElement('td');
             td.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-900';
 
-            // For the Temperature column with conditional styling
+            // Special styling for temperature column
             if (colIndex === 4 && value !== 'N/A') {
                 const temp = parseFloat(value);
-                td.textContent = `${temp}°C`;
-                // Show red if >= 39
                 td.classList.add(temp >= 39 ? 'text-red-600' : 'text-green-600');
-            } else {
-                td.textContent = value;
             }
+
+            td.textContent = value;
             row.appendChild(td);
         });
 
         tableBody.appendChild(row);
     });
 
-    // Calculate and display metrics (total users, avg temp, total logins).
+    // Update dashboard metrics and charts
     displayMetrics(employees);
     renderCharts(employees);
 }
 
 /**
- * 3) Display metrics.
+ * Calculate and display metrics
  */
 function displayMetrics(employees) {
     // Total users
+    document.getElementById('totalUsers').textContent = employees.length;
 
     // Average temperature
     const temps = employees
-        .filter((emp) => emp.temperature !== null && !isNaN(emp.temperature))
-        .map((emp) => parseFloat(emp.temperature));
+        .filter(emp => emp.temperature !== null && !isNaN(emp.temperature))
+        .map(emp => parseFloat(emp.temperature));
     const avgTemp = temps.length
         ? (temps.reduce((a, b) => a + b, 0) / temps.length).toFixed(1)
         : 0;
+    document.getElementById('avgTemp').textContent = `${avgTemp}°C`;
 
-    // Total logins (example: counting any non-null last_login)
-    const totalLogins = employees.filter((emp) => emp.last_login).length;
+    // Total logins
+    const totalLogins = employees.filter(emp => emp.last_login).length;
+    document.getElementById('totalLogins').textContent = totalLogins;
 }
 
 /**
- * 4) Setup search for the table.
+ * Setup search functionality for the table
  */
 function setupSearch() {
     const searchInput = document.getElementById('searchInput');
@@ -106,8 +108,7 @@ function setupSearch() {
 }
 
 /**
- * 5) Render Charts (Temperature Trend, Login Activity, etc.).
- *    This is just a placeholder. Customize as needed.
+ * Render dashboard charts
  */
 function renderCharts(employees) {
     // 1. Temperature Distribution Chart
@@ -121,12 +122,12 @@ function renderCharts(employees) {
             'High Fever (>39.5°C)': 0
         };
 
-        employees.forEach(emp => {
-            const temp = parseFloat(emp.temperature);
+        employes.forEach(emp => {
+            const temp = parseFloat(emp.temperature || 0);
             if (temp < 37.5) tempRanges['Normal (<37.5°C)']++;
-            else if (temp < 38.5) tempRanges['Elevated (37.5-38.5°C)']++;
-            else if (temp < 39.5) tempRanges['Fever (38.5-39.5°C)']++;
-            else tempRanges['High Fever (>39.5°C)']++;
+            else if (temp >= 37.5 && temp < 38.5) tempRanges['Elevated (37.5-38.5°C)']++;
+            else if (temp >= 38.5 && temp <= 39.5) tempRanges['Fever (38.5-39.5°C)']++;
+            else if (temp > 39.5) tempRanges['High Fever (>39.5°C)']++;
         });
 
         new Chart(tempCtx, {
@@ -151,19 +152,13 @@ function renderCharts(employees) {
                     y: {
                         beginAtZero: true
                     }
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Temperature Distribution'
-                    }
                 }
             }
         });
     }
 
-    // 2. Role Distribution Chart (replacing login chart)
-    const roleCtx = document.getElementById('loginChart')?.getContext('2d');
+    // 2. Role Distribution Chart
+    const roleCtx = document.getElementById('roleChart')?.getContext('2d');
     if (roleCtx) {
         // Count employees by role
         const roleCount = employees.reduce((acc, emp) => {
@@ -178,41 +173,51 @@ function renderCharts(employees) {
                 datasets: [{
                     data: Object.values(roleCount),
                     backgroundColor: [
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(255, 99, 132, 0.6)'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Employee Role Distribution'
-                    }
-                }
-            }
+'rgba(54, 162, 235, 0.6)',
+    'rgba(75, 192, 192, 0.6)',
+    'rgba(255, 206, 86, 0.6)',
+    'rgba(255, 99, 132, 0.6)'
+],
+borderWidth: 1
+}]
+},
+options: {
+    responsive: true,
+        legend: {
+        position: 'bottom'
+    },
+    title: {
+        display: true,
+            text: 'Employee Role Distribution'
+    }
+}
+});
+}
+}
+
+/**
+ * Setup logout functionality
+ */
+function setupLogout() {
+    const logoutButton = document.getElementById('logout');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('loggedInUser');
+            window.location.href = 'login.html';
         });
     }
-
-    // Update metrics display
-    const avgTemp = employees.reduce((sum, emp) => sum + parseFloat(emp.temperature), 0) / employees.length;
-    document.getElementById('avgTemp').textContent = `${avgTemp.toFixed(1)}°C`;
 }
+
 /**
- * 6) Initialize everything on DOM load
+ * Initialize everything when DOM loads
  */
 function init() {
     displayEmployees();
     setupSearch();
+    setupLogout();
 }
 
-// Only run once
+// Run initialization once
 if (!window.tableInitialized) {
     window.tableInitialized = true;
     if (document.readyState === 'loading') {
@@ -220,4 +225,142 @@ if (!window.tableInitialized) {
     } else {
         init();
     }
+}
+
+// Add this to your tables.js file
+
+/**
+ * Setup form submission handling
+ */
+function setupAddUserForm() {
+    const form = document.getElementById('addUserForm');
+    const statusAlert = document.getElementById('statusAlert');
+    const statusMessage = document.getElementById('statusMessage');
+
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Collect form data
+        const formData = {
+            first_name: form.first_name.value,
+            last_name: form.last_name.value,
+            id_number: form.id_number.value,
+            email: form.email.value,
+            personal_number: form.personal_number.value,
+            temperature: null,
+            last_login: null
+        };
+
+        try {
+            const response = await fetch('http://localhost:3001/api/employees', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to add user');
+            }
+
+            // Show success message
+            showStatus('User added successfully!', 'success');
+
+            // Clear form
+            form.reset();
+
+            // Refresh the table
+            await displayEmployees();
+
+        } catch (error) {
+            console.error('Error adding user:', error);
+            showStatus('Failed to add user. Please try again.', 'error');
+        }
+    });
+}
+
+/**
+ * Display status message
+ */
+function showStatus(message, type) {
+    const statusAlert = document.getElementById('statusAlert');
+    const statusMessage = document.getElementById('statusMessage');
+
+    statusAlert.className = `mb-4 p-4 rounded-md ${
+        type === 'success'
+            ? 'bg-green-50 border border-green-200 text-green-700'
+            : 'bg-red-50 border border-red-200 text-red-700'
+    }`;
+
+    statusMessage.textContent = message;
+    statusAlert.classList.remove('hidden');
+
+    // Hide the message after 3 seconds
+    setTimeout(() => {
+        statusAlert.classList.add('hidden');
+    }, 3000);
+}
+
+/**
+ * Modify your renderCharts function to only include the temperature chart
+ */
+function renderCharts(employees) {
+    // Temperature Distribution Chart
+    const tempCtx = document.getElementById('temperatureChart')?.getContext('2d');
+    if (tempCtx) {
+        // Group temperatures into ranges
+        const tempRanges = {
+            'Normal (<37.5°C)': 0,
+            'Elevated (37.5-38.5°C)': 0,
+            'Fever (38.5-39.5°C)': 0,
+            'High Fever (>39.5°C)': 0
+        };
+
+        employees.forEach(emp => {
+            const temp = parseFloat(emp.temperature || 0);
+            if (temp < 37.5) tempRanges['Normal (<37.5°C)']++;
+            else if (temp >= 37.5 && temp < 38.5) tempRanges['Elevated (37.5-38.5°C)']++;
+            else if (temp >= 38.5 && temp <= 39.5) tempRanges['Fever (38.5-39.5°C)']++;
+            else if (temp > 39.5) tempRanges['High Fever (>39.5°C)']++;
+        });
+
+        new Chart(tempCtx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(tempRanges),
+                datasets: [{
+                    label: 'Number of Employees',
+                    data: Object.values(tempRanges),
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.6)',  // green
+                        'rgba(255, 206, 86, 0.6)',  // yellow
+                        'rgba(255, 159, 64, 0.6)',  // orange
+                        'rgba(255, 99, 132, 0.6)'   // red
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+}
+
+/**
+ * Update your init function to include the form setup
+ */
+function init() {
+    displayEmployees();
+    setupSearch();
+    setupLogout();
+    setupAddUserForm();  // Add this line
 }

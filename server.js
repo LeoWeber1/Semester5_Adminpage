@@ -12,44 +12,30 @@ app.use(express.json());
 // Auto-load SQL file to initialize the database (if not already initialized)
 const initializeDB = () => {
     const dbFile = './db.sql';
-    // exec(`psql -U ${process.env.DB_USER} -d ${process.env.DB_NAME} -f ${dbFile}`, (err, stdout, stderr) => {
-    //     if (err) {
-    //         console.error(`Error initializing database: ${stderr}`);
-    //     } else {
-    //         console.log('Database initialized successfully');
-    //     }
-    // });
     const command = `psql -U ${process.env.DB_USER} -d ${process.env.DB_NAME} -h ${process.env.DB_HOST} -p ${process.env.DB_PORT} -f ${dbFile}`;
 
-    // Umgebungsvariablen explizit setzen
-    exec(command, {
-        env: {
-            ...process.env, // Behalte vorhandene Umgebungsvariablen
-            PGPASSWORD: process.env.DB_PASSWORD, // Setze die PGPASSWORD-Variable
+    exec(
+        command,
+        {
+            env: {
+                ...process.env,
+                PGPASSWORD: process.env.DB_PASSWORD, // Set PGPASSWORD explicitly
+            },
         },
-    }, (err, stdout, stderr) => {
-        if (err) {
-            console.error(`Error initializing database: ${stderr}`);
-        } else {
-            console.log('Database initialized successfully');
+        (err, stdout, stderr) => {
+            if (err) {
+                console.error(`Error initializing database: ${stderr}`);
+            } else {
+                console.log('Database initialized successfully');
+            }
         }
-    });
+    );
 };
 
 initializeDB();
 
-app.get('/', (req, res) => {
-    res.send('Server is running! Go to /login.html to log in.');
-});
-
-app.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000');
-});
-
-// Middleware
 app.use(cors());
-app.use(express.json());
-app.use(express.static('public')); // Serve static files (login.html, index.html, etc.)
+app.use(express.static('public')); // Serve static files (login.html, etc.)
 
 // ========== Test DB Connection ==========
 app.get('/test-db', async (req, res) => {
@@ -78,9 +64,9 @@ app.post('/api/register', async (req, res) => {
             return res.status(400).json({ error: 'Username already exists' });
         }
 
-        // Insert new user
+        // Insert new user into users table
         const newUser = await pool.query(
-            'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id, username',
+            'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *',
             [username, password]
         );
 
@@ -117,7 +103,6 @@ app.post('/api/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
 
-        // Successful login
         res.json({
             id: userResult.rows[0].id,
             username: userResult.rows[0].username,
@@ -133,6 +118,7 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/employees', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM employees');
+        console.log('Fetched employees:', result.rows);
         res.json(result.rows);
     } catch (error) {
         console.error('Error fetching employees:', error.message);
@@ -140,14 +126,36 @@ app.get('/api/employees', async (req, res) => {
     }
 });
 
+// ========== Add New Employee ==========
+app.post('/api/employees', async (req, res) => {
+    try {
+        const { first_name, last_name, id_number, email, personal_number } = req.body;
+
+        if (!first_name || !last_name || !id_number || !email || !personal_number) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        const query = `
+            INSERT INTO employees (first_name, last_name, id_number, email, personal_number)
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING *`;
+        const values = [first_name, last_name, id_number, email, personal_number];
+
+        const result = await pool.query(query, values);
+        console.log('Added employee:', result.rows[0]);
+        res.status(201).json({ message: 'Employee added successfully', employee: result.rows[0] });
+    } catch (error) {
+        console.error('Error adding employee:', error.message);
+        res.status(500).json({ error: 'Server error adding employee' });
+    }
+});
+
 // ========== Default Page ==========
 app.get('/', (req, res) => {
-    // By default, send the login page or dashboard
     res.sendFile('login.html', { root: './public' });
 });
-const PORT = process.env.PORT || 3001; // Use 3001 instead of 3000
 
-// ========== Start Server ==========
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
