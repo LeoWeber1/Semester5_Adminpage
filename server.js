@@ -81,36 +81,29 @@ app.post('/api/register', async (req, res) => {
 });
 
 // ========== Login Existing User ==========
+
 app.post('/api/login', async (req, res) => {
+    const { username, password } = req.body;
+
     try {
-        const { username, password } = req.body;
-
-        if (!username || !password) {
-            return res.status(400).json({ error: 'Username and password are required' });
+        const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
+        if (result.rows.length === 0) {
+            return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // Check if user exists
-        const userResult = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
-        if (userResult.rows.length === 0) {
-            console.log('User not found:', username);
-            return res.status(401).json({ error: 'Invalid username or password' });
+        const user = result.rows[0];
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // Check password
-        const dbPassword = userResult.rows[0].password;
-        if (dbPassword !== password) {
-            console.log('Password mismatch for user:', username);
-            return res.status(401).json({ error: 'Invalid username or password' });
-        }
+        // Optional: Generate a JWT token
+        const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        res.json({
-            id: userResult.rows[0].id,
-            username: userResult.rows[0].username,
-            message: 'Login successful',
-        });
-    } catch (error) {
-        console.error('Error logging in:', error.message);
-        res.status(500).json({ error: 'Server error logging in' });
+        return res.json({ id: user.id, username: user.username, token });
+    } catch (err) {
+        console.error('Error during login:', err);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
