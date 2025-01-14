@@ -18,6 +18,7 @@ async function fetchEmployees() {
 /**
  * Display employees in the HTML table
  */
+
 async function displayEmployees() {
     const employees = await fetchEmployees();
     const tableBody = document.querySelector('tbody.bg-white.divide-y');
@@ -28,18 +29,21 @@ async function displayEmployees() {
 
     tableBody.innerHTML = ''; // Clear existing data
 
-    employees.forEach((emp) => {
+    employees.forEach((log) => {
         const row = document.createElement('tr');
         row.className = 'hover:bg-gray-50 transition-colors duration-150';
 
         // Create table columns with data
         const columns = [
-            `${emp.first_name || 'N/A'} ${emp.last_name || ''}`,
-            emp.id_number || 'N/A',
-            emp.email || 'N/A',
-            emp.last_login || 'N/A',
-            emp.temperature != null ? `${parseFloat(emp.temperature).toFixed(1)}°C` : 'N/A',
-            emp.personal_number || 'N/A'
+            log.id || 'N/A',
+            log.first_name || 'N/A',
+            log.last_name || 'N/A',
+            log.id_number || 'N/A',
+            log.email || 'N/A',
+            log.last_login || 'N/A',
+            log.temperature != null ? `${parseFloat(log.temperature).toFixed(1)}°C` : 'N/A',
+            log.threshold_value || 'N/A',
+            log.personal_number || 'N/A'
         ];
 
         columns.forEach((value, colIndex) => {
@@ -47,9 +51,10 @@ async function displayEmployees() {
             td.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-900';
 
             // Special styling for temperature column
-            if (colIndex === 4 && value !== 'N/A') {
+            if (colIndex === 6 && value !== 'N/A') {
                 const temp = parseFloat(value);
-                td.classList.add(temp >= 39 ? 'text-red-600' : 'text-green-600');
+                const threshold = parseFloat(log.threshold_value || 37.5);
+                td.classList.add(temp >= threshold ? 'text-red-600' : 'text-green-600');
             }
 
             td.textContent = value;
@@ -59,9 +64,8 @@ async function displayEmployees() {
         tableBody.appendChild(row);
     });
 
-    // Update dashboard metrics and charts
+    // Update dashboard metrics
     displayMetrics(employees);
-    renderCharts(employees);
 }
 
 /**
