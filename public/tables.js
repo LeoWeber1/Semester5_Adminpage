@@ -21,6 +21,7 @@ async function fetchEmployees() {
 
 async function displayEmployees() {
     const employees = await fetchEmployees();
+    renderCharts(employees); // Charts aktualisieren
     const tableBody = document.querySelector('tbody.bg-white.divide-y');
     if (!tableBody) {
         console.error('Table body not found');
@@ -114,11 +115,16 @@ function setupSearch() {
 /**
  * Render dashboard charts
  */
+let tempChartInstance;
+
 function renderCharts(employees) {
-    // 1. Temperature Distribution Chart
+    // Temperature Distribution Chart
     const tempCtx = document.getElementById('temperatureChart')?.getContext('2d');
     if (tempCtx) {
-        // Group temperatures into ranges
+        if (tempChartInstance) {
+            tempChartInstance.destroy(); // Vorheriges Diagramm entfernen
+        }
+
         const tempRanges = {
             'Normal (<37.5°C)': 0,
             'Elevated (37.5-38.5°C)': 0,
@@ -126,7 +132,7 @@ function renderCharts(employees) {
             'High Fever (>39.5°C)': 0
         };
 
-        employes.forEach(emp => {
+        employees.forEach(emp => {
             const temp = parseFloat(emp.temperature || 0);
             if (temp < 37.5) tempRanges['Normal (<37.5°C)']++;
             else if (temp >= 37.5 && temp < 38.5) tempRanges['Elevated (37.5-38.5°C)']++;
@@ -134,7 +140,7 @@ function renderCharts(employees) {
             else if (temp > 39.5) tempRanges['High Fever (>39.5°C)']++;
         });
 
-        new Chart(tempCtx, {
+        tempChartInstance = new Chart(tempCtx, {
             type: 'bar',
             data: {
                 labels: Object.keys(tempRanges),
@@ -160,6 +166,8 @@ function renderCharts(employees) {
             }
         });
     }
+
+
 
     // 2. Role Distribution Chart
     const roleCtx = document.getElementById('roleChart')?.getContext('2d');
