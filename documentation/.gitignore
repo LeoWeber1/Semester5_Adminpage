@@ -10,5 +10,9 @@
 *.synctex.gz
 *.toc
 
+_minted-main
+
+*.tdo
+
 # (Optional) Exclude compiled pdf-file 
-*.pdf 
+# *.pdf 

@@ -10,11 +10,15 @@
 \geometry{a4paper, left=3cm, right=3cm, top=3cm, bottom=3cm}
 \usepackage{graphicx}
 
-%\usepackage[ngerman,colorinlistoftodos]{todonotes} %Optionales Package für ToDo-Notes im kompilierten .pdf
+\usepackage{minted}
+% \usemintedstyle{one-dark}  % Alternativer Farbstil
 
 \usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
 %\bibliographystyle{plain}
 \addbibresource{literature.bib}
+
+\usepackage[ngerman,colorinlistoftodos]{todonotes}
+\setlength{\marginparwidth}{2cm} % um die ToDo-Notes schöner am Seitenrand anzeigen zu lassen
 
 \begin{document}
 	
@@ -23,7 +27,7 @@
 		\centering
 		\vspace*{1cm}
 		
-		{\LARGE \textbf{Projekttitel}}\\[1cm]
+		{\LARGE \textbf{Health Checker}}\\[1cm]
 		
 		{\large Projektdokumentation}\\[1.0cm]
 		{\large Studiengang Systems Engineering (B.~Eng.)}\\[0.3cm]
@@ -39,26 +43,26 @@
         Matrikelnummer: 2092175 \\
         E-Mail: jan-niclas.fenger@tha.de \\[0.5cm]
 		
-        Maria Musterfrau \\
-        Matrikelnummer: 7654321 \\
-        E-Mail: maria.musterfrau@tha.de
+        Simon Schneider \\
+        Matrikelnummer: 2151357 \\
+        E-Mail: simon.schneider1@tha.de
 		\end{minipage}
 		\hfill
 		\begin{minipage}[t]{0.45\textwidth}
         \raggedright
-        Max Mustermann \\
-        Matrikelnummer: 1234567 \\
-        E-Mail: max.mustermann@tha.de \\[0.5cm]
+        Leopold Weber \\
+        Matrikelnummer: 2155780 \\
+        E-Mail: leopold.weber@tha.de \\[0.5cm]
     
-        Alex Beispiel \\
-        Matrikelnummer: 1928374 \\
-        E-Mail: alex.beispiel@tha.de
+        Janis Preiß \\
+        Matrikelnummer: 2150826 \\
+        E-Mail: janis.preiss@tha.de
 		\end{minipage}
 		\\[1.5cm]
 		\end{center}
 		
 		\textbf{Betreuer/in:}\\[0.5cm]
-		Prof. Dr. Thomas Kirchmeier\\[3cm]
+		Prof. Dr. Volodymyr Brovkov\\[3cm]
 		
 		\vfill
 		
@@ -83,4 +87,6 @@
 	\addcontentsline{toc}{section}{Literatur}
 	%\printbibliography[]
 	
+	\listoftodos{}
+
 \end{document}
