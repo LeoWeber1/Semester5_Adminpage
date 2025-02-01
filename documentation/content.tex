@@ -35,6 +35,90 @@
 \todo[inline, color=green]{Simon}
 
 
+\subsection{Prinzipienschaltbild}
+\label{subsec:prinzipienschaltbild}
+
+Der prinzipielle Aufbau des Projekts wurde zuerst erstellt und in einem Blockdiagramm dargestellt, dass die verschiedenen Komponenten und deren Verbindungen veranschaulicht. Dieses Diagramm zeigt den Fluss des Zugangskontrollsystem von Authentifizierung und Temperaturmessung über das Schreiben in die Datenbank bis hin zur Ansteuerung der Drehkreuzes und der Lichtschranken.
+\todo{Bildgröße am Ende anpassen}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.4\linewidth]{figures/Prinzipienschaltbild.png}
+	\caption[Prinzipienschaltbild]{Schematischer Aufbau des Projekts}\label{fig:prinzipienschaltbild}
+\end{figure}
+
+
+\subsection{Die Wahl der Hardware}
+\label{subsec:die_wahl_der_hardware}
+
+\subsubsection{Raspberry-Pi}
+
+Der Raspberry Pi verfügt bereits über eine Vielzahl an Schnittstellen, die eine einfache Integration von Sensoren, Aktoren und weiteren Peripheriegeräten ermöglicht. Durch vorhandenes Wissen und umfangreiche Dokumentationen kann die Umsetzung der Anforderungen effizient erfolgen, ohne dass eine aufwendige Einarbeitung in neue Hardware notwendig ist. Zudem stellt der Raspberry Pi eine kostengünstige und vielseitige Plattform dar, die eine schnelle Entwicklung, Erprobung und iterative Optimierung technischer Lösungen unterstützt.
+
+\subsubsection{Display}
+
+Das Display wird verwendet, um dem Nutzer visuell relevante Informationen wie den aktuellen Status des Systems, Zugangsberechtigungen oder Fehlermeldungen bereitzustellen. Durch die grafische Darstellung kann der Benutzer schnell und intuitiv auf wichtige Systeminformationen zugreifen, was die Bedienfreundlichkeit und Effizienz des Systems erhöht. Das Display sorgt dafür, dass der Nutzer klare Informationen über das System erhält. Unter anderem mit Farben oder Symbolen wird angezeigt, ob der Zugang erlaubt oder verweigert wird. So bekommt der Nutzer direktes Feedback und Missverständnisse werden vermieden.
+
+\subsubsection{RFID-Reader}
+
+Der RFID-Reader wird im Zugangssystem zur Authentifizierung verwendet, indem er die individuellen Daten von RFID-Tags ausliest, die jedem Mitarbeiter zugeordnet sind. Jeder Tag enthält eine einzigartige ID, die mit einer gespeicherten Liste von Berechtigungen abgeglichen wird, um zu entscheiden, ob der Zugang gewährt oder verweigert wird. Diese personalisierte, berührungslose Authentifizierung bietet eine schnelle und sichere Möglichkeit, den Zugang für berechtigte Personen zu steuern.
+
+\subsubsection{Infrarot-Temperatursensor}
+
+Ein Infrarot-Temperatursensor misst schnell und kontaktlos die Körpertemperatur eines Mitarbeiters. Liegt die Temperatur über einem festgelegten Schwellenwert, wird der Mitarbeiter als potenziell krank eingestuft. Diese Methode ist hygienisch, schnell und verhindert die Verbreitung von Krankheiten im Arbeitsumfeld.
+
+\subsubsection{Piezo-Buzzer}
+
+Der Piezo-Buzzer wird verwendet, um dem Nutzer akustisches Feedback zu geben, indem er bei bestimmten Ereignissen wie dem erfolgreichen oder fehlgeschlagenen Zugang ein Signal abgibt. Durch die Erzeugung von Tönen oder Melodien kann der Benutzer sofort erkennen, ob eine Aktion erfolgreich war oder eine Fehlermeldung vorliegt. Der Buzzer sorgt für eine klare, hörbare Rückmeldung, die das visuelle Feedback des Systems ergänzt und so die Benutzererfahrung verbessert, indem er Missverständnisse verhindert und sofortige Reaktionen ermöglicht.
+
+\subsubsection{Ultraschallsensor}
+
+Der Ultraschallsensor erkennt die Annäherung eines Mitarbeiters und aktiviert automatisch das Display. So wird das System effizient und benutzerfreundlich ohne manuelles Eingreifen aktiviert.
+
+\subsubsection{Wemos ESP32 D1 Mini}
+
+Der Wemos D1 Mini ESP32 wurde aufgrund seiner kompakten Größe und ausreichenden GPIO-Pins für die Steuerung der Lichtschranken und des Steppermotors gewählt. Da er über UART an einen Raspberry Pi angeschlossen wird, ermöglicht der Wemos eine einfache und effiziente Kommunikation zwischen den Komponenten bei gleichzeitig platzsparender Bauweise.
+
+\subsubsection{Lichtschranke}
+
+Die Lichtschranke wird eingesetzt, um zu erkennen, wenn jemand versucht, durch das Drehkreuz zu gehen. Sobald der Infrarotstrahl unterbrochen wird, signalisiert die Lichtschranke dem System, dass sich eine Person im Drehkreuzbereich befindet, und löst daraufhin die entsprechende Aktion aus, wie zum Beispiel das Öffnen des Drehkreuzes. Diese Technologie ermöglicht eine präzise Erkennung der Passage und sorgt für eine automatische, kontaktlose Steuerung des Zugangs.
+
+\subsubsection{Steppermotor}
+
+Der Steppermotor wird verwendet, um ein Drehkreuz zu simulieren, indem er präzise Drehbewegungen ausführt. Durch die Steuerung des Motors kann das Drehkreuz geöffnet oder geschlossen werden, je nachdem, ob ein Mitarbeiter Zugang erhält. Diese Methode ermöglicht eine exakte und zuverlässige Steuerung der Drehmechanik, was für den reibungslosen Ablauf des Zugangssystems entscheidend ist.
+
+\subsubsection{WEB-Datenbank-Server}
+
+Ein Web- und Datenbankserver wird für die Steuerung, Überwachung und Speicherung des Zugangskontrollsystems genutzt. Er verwaltet Benutzerzugänge, speichert Transaktionsprotokolle und ermöglicht eine zentrale Überwachung und Verwaltung des Systems.
+
+\subsubsection{Switch}
+
+Für die Netzwerkkommunikation wird ein Switch eingesetzt, um die Verbindung zwischen den verschiedenen Geräten im System zu ermöglichen. Der Switch sorgt für eine effiziente und zuverlässige Datenübertragung, indem er die Geräte im Netzwerk miteinander verbindet und den Datenverkehr optimiert.
+
+\subsubsection{Zusammenfassung}
+
+Die ausgewählten Komponenten bieten eine effiziente und zuverlässige Lösung für das Zugangskontrollsystem. Sie ermöglichen eine benutzerfreundliche Interaktion, präzise Erfassung von Daten und Sicherheitsüberprüfungen. Ein zentraler Server verwaltet die Daten, während eine stabile Netzwerkverbindung die Kommunikation zwischen den Geräten sicherstellt. So wird eine zuverlässige Steuerung und Überwachung des Zugangsprozesses gewährleistet.
+
+
+\subsection{Bestimmung der Messwerte}
+
+Im Rahmen der Implementierung des Zugangskontrollsystems werden verschiedene Messwerte erfasst, um die Funktionalität des Systems sicherzustellen. Die Messwerte werden kontinuierlich überprüft und validiert, um die Genauigkeit und Zuverlässigkeit der Systeme zu gewährleisten.
+
+\subsubsection{Bestimmung der Körpertemperatur}
+
+Die Körpertemperatur wird durch einen Infrarot-Temperatursensor (MLX90614) gemessen, der die Umgebungstemperatur und die Temperatur des Mitarbeiters erfasst. Der Sensor arbeitet kontaktlos und liefert schnell Ergebnisse.
+
+\vspace{1em}
+\noindent Um die Validität der gemessenen Temperatur zu überprüfen, wird der Sensorwert mit den Messwerten eines Referenzthermometers verglichen. Bei größeren Abweichungen erfolgt eine Kalibrierung des Sensors, um genaue und zuverlässige Temperaturdaten zu gewährleisten. Diese Validierung stellt sicher, dass die Temperaturmessung präzise ist und eine korrekte Entscheidung darüber getroffen werden kann, ob ein Mitarbeiter als potenziell krank eingestuft wird.
+
+\subsubsection{Bestimmung des Abstandes (Näherungssensor)}
+
+Der Abstand wird durch einen Ultraschallsensor gemessen, der die Entfernung zum Objekt ermittelt. Der Sensor sendet Schallwellen aus und misst die Zeit, die benötigt wird, damit die Wellen zurückkehren. Diese Zeitdifferenz wird verwendet, um die Entfernung in Zentimetern zu berechnen.
+
+\vspace{1em}
+\noindent Die Messwerte des Ultraschallsensors wurden durch den Vergleich mit einer physischen Messung mit einem Meterstab validiert. Der ermittelte Wert des Sensors wurde mit den Werten des Meterstabs verglichen, um sicherzustellen, dass die Entfernungsmessung korrekt ist. Diese Methode gewährleistet eine präzise Erkennung der Annäherung eines Mitarbeiters an das System.
+
+
 \section{Software und User Interface}
 \label{sec:software_und_user_interface}
 
