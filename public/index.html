@@ -1,78 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard</title>
 
-    <!-- Tailwind CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+            rel="stylesheet"
+    />
 
-    <!-- Font Awesome -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"></script>
+    <!-- Font Awesome for Icons -->
+    <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
+    ></script>
 
-    <!-- Custom Styles -->
+    <!-- Custom Fonts and Colors -->
     <style>
-        @import url('https://fonts.googleapis.com/css?family=Karla:400,700&display=swap');
-        .font-family-karla { font-family: karla; }
-        .bg-sidebar { background: #3d68ff; }
-        .active-nav-link { background: #1947ee; }
-        .nav-item:hover { background: #1947ee; }
-        .account-link:hover { background: #3d68ff; }
+        @import url("https://fonts.googleapis.com/css?family=Karla:400,700&display=swap");
+        .font-family-karla {
+            font-family: karla;
+        }
+        /* New Color Palette */
+        /* #b4b387	(180,179,135) | #eeddcc (238,221,204) | #778aab (119,138,171) | #bcaaaa (188,170,170) | #ddbb98 (221,187,152) */
+        .bg-sidebar {
+            background: #778aab;
+        }
+        .active-nav-link {
+            background: #ddbb98;
+        }
+        .nav-item:hover {
+            background: #ddbb98;
+        }
+        .logout-btn {
+            background: #bcaaaa;
+        }
+        .header-bg {
+            background: #eeddcc;
+        }
+        .body-bg {
+            background: #b4b387;
+        }
+        /* For buttons and primary actions, we can reuse one of the palette colors */
+        .btn-primary {
+            background: #ddbb98;
+        }
+        .btn-primary:hover {
+            background: #d0a77f;
+        }
+        /* Icon container backgrounds */
+        .icon-users {
+            background: rgba(221, 187, 152, 0.75); /* using #ddbb98 with opacity */
+        }
+        .icon-temp {
+            background: rgba(188, 170, 170, 0.75); /* using #bcaaaa with opacity */
+        }
+        .icon-logins {
+            background: rgba(119, 138, 171, 0.75); /* using #778aab with opacity */
+        }
     </style>
 </head>
-<body class="bg-gray-100 font-family-karla flex">
-
+<body class="body-bg font-family-karla flex">
 <!-- Sidebar -->
 <aside class="relative bg-sidebar h-screen w-64 hidden sm:block shadow-xl">
     <div class="p-6">
-        <a href="./index.html" class="text-white text-3xl font-semibold uppercase hover:text-gray-300">Admin</a>
+        <a
+                href="./index.html"
+                class="text-white text-3xl font-semibold uppercase hover:text-gray-300"
+        >Admin</a
+        >
     </div>
     <nav class="text-white text-base font-semibold pt-3">
-        <a href="#" class="flex items-center active-nav-link text-white py-4 pl-6 nav-item">
+        <a
+                href="#"
+                class="flex items-center active-nav-link text-white py-4 pl-6 nav-item"
+        >
             <i class="fas fa-tachometer-alt mr-3"></i>
             Dashboard
         </a>
-        <a href="tables.html" class="flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item">
+        <a
+                href="tables.html"
+                class="flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item"
+        >
             <i class="fas fa-table mr-3"></i>
             Tables
         </a>
     </nav>
     <div class="absolute bottom-0 my-10">
-        <button id="logout" class="bg-red-500 text-white px-6 py-3 mb-4 rounded-md ml-6">Logout</button>
+        <button id="logout" class="logout-btn text-white px-6 py-3 mb-4 rounded-md ml-6">
+            Logout
+        </button>
     </div>
 </aside>
 
+<!-- Main Content -->
 <div class="w-full flex flex-col h-screen overflow-y-hidden">
     <!-- Header -->
-    <header class="w-full items-center bg-white py-2 px-6 hidden sm:flex">
+    <header class="w-full items-center header-bg py-2 px-6 hidden sm:flex">
         <div class="w-1/2"></div>
         <div class="relative w-1/2 flex justify-end">
-            <button class="relative p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:bg-gray-100 focus:text-gray-600 rounded-full">
-                <span class="absolute top-0 right-0 h-2 w-2 mt-1 mr-2 bg-red-500 rounded-full animate-ping"></span>
+            <button
+                    class="relative p-2 text-gray-600 hover:bg-gray-200 focus:bg-gray-200 rounded-full"
+            >
+          <span
+                  class="absolute top-0 right-0 h-2 w-2 mt-1 mr-2 bg-red-500 rounded-full animate-ping"
+          ></span>
                 <i class="fas fa-bell"></i>
             </button>
             <button class="relative p-2 ml-2">
-                <img class="w-8 h-8 rounded-full" style="width: 50px;" src="./assets/FH-Augsburg-Logo.svg.png" alt="User Avatar">
+                <img
+                        class="w-8 h-8 rounded-full"
+                        style="width: 50px;"
+                        src="./assets/FH-Augsburg-Logo.svg.png"
+                        alt="User Avatar"
+                />
             </button>
         </div>
     </header>
 
-    <!-- Main Content -->
     <div class="w-full overflow-x-hidden border-t flex flex-col">
         <main class="w-full flex-grow p-6">
             <h1 class="text-3xl text-black pb-6">Dashboard</h1>
 
-            <!-- Metrics Cards -->
+            <!-- Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <!-- Total Users -->
                 <div class="bg-white rounded-lg shadow-sm p-6">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-blue-500 bg-opacity-75">
+                        <div class="p-3 rounded-full icon-users">
                             <i class="fas fa-users text-white text-2xl"></i>
                         </div>
                         <div class="mx-4">
-                            <h4 class="text-2xl font-semibold text-gray-700" id="totalUsers">0</h4>
+                            <h4 class="text-2xl font-semibold text-gray-700" id="totalUsers">
+                                0
+                            </h4>
                             <div class="text-gray-500">Total Users</div>
                         </div>
                     </div>
@@ -81,11 +143,13 @@
                 <!-- Average Temperature -->
                 <div class="bg-white rounded-lg shadow-sm p-6">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-red-500 bg-opacity-75">
+                        <div class="p-3 rounded-full icon-temp">
                             <i class="fas fa-thermometer-half text-white text-2xl"></i>
                         </div>
                         <div class="mx-4">
-                            <h4 class="text-2xl font-semibold text-gray-700" id="avgTemp">0°C</h4>
+                            <h4 class="text-2xl font-semibold text-gray-700" id="avgTemp">
+                                0°C
+                            </h4>
                             <div class="text-gray-500">Avg Temperature</div>
                         </div>
                     </div>
@@ -94,18 +158,20 @@
                 <!-- Total Logins -->
                 <div class="bg-white rounded-lg shadow-sm p-6">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-green-500 bg-opacity-75">
+                        <div class="p-3 rounded-full icon-logins">
                             <i class="fas fa-sign-in-alt text-white text-2xl"></i>
                         </div>
                         <div class="mx-4">
-                            <h4 class="text-2xl font-semibold text-gray-700" id="totalLogins">0</h4>
+                            <h4 class="text-2xl font-semibold text-gray-700" id="totalLogins">
+                                0
+                            </h4>
                             <div class="text-gray-500">Total Logins</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Charts Grid -->
+            <!-- Charts and Forms -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 <!-- Temperature Chart -->
                 <div class="bg-white rounded-lg shadow-sm p-6">
@@ -113,15 +179,13 @@
                     <canvas id="temperatureChart" width="400" height="200"></canvas>
                 </div>
 
-                <!-- Role Distribution Chart -->
-                <!-- Replace the Role Distribution Chart div with this form -->
+                <!-- Add New User Form -->
                 <div class="bg-white rounded-lg shadow-sm p-6">
                     <div class="flex items-center gap-2 mb-4">
-                        <i class="fas fa-user-plus text-blue-500"></i>
+                        <i class="fas fa-user-plus text-[#778aab]"></i>
                         <h2 class="text-xl font-semibold">Add New User</h2>
                     </div>
 
-                    <!-- Status Alert (hidden by default) -->
                     <div id="statusAlert" class="hidden mb-4 p-4 rounded-md">
                         <p id="statusMessage" class="text-sm"></p>
                     </div>
@@ -129,58 +193,80 @@
                     <form id="addUserForm" class="space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">First Name</label>
+                                <label class="block text-sm font-medium text-gray-700"
+                                >First Name</label
+                                >
                                 <input
                                         type="text"
                                         name="first_name"
-                                        class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+                                        class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-[#ddbb98] focus:ring-[#ddbb98]"
                                         required
-                                >
+                                />
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Last Name</label>
+                                <label class="block text-sm font-medium text-gray-700"
+                                >Last Name</label
+                                >
                                 <input
                                         type="text"
                                         name="last_name"
-                                        class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+                                        class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-[#ddbb98] focus:ring-[#ddbb98]"
                                         required
-                                >
+                                />
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">ID Number</label>
+                            <label class="block text-sm font-medium text-gray-700"
+                            >ID Number</label
+                            >
                             <input
                                     type="text"
                                     name="id_number"
-                                    class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+                                    class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-[#ddbb98] focus:ring-[#ddbb98]"
                                     required
-                            >
+                            />
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Email</label>
+                            <label class="block text-sm font-medium text-gray-700"
+                            >Email</label
+                            >
                             <input
                                     type="email"
                                     name="email"
-                                    class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+                                    class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-[#ddbb98] focus:ring-[#ddbb98]"
                                     required
-                            >
+                            />
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Personal Number</label>
+                            <label class="block text-sm font-medium text-gray-700"
+                            >Personal Number</label
+                            >
                             <input
                                     type="text"
                                     name="personal_number"
-                                    class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500"
+                                    class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-[#ddbb98] focus:ring-[#ddbb98]"
                                     required
+                            />
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700"
+                            >Temperature (Optional)</label
                             >
+                            <input
+                                    type="number"
+                                    name="temperature"
+                                    step="0.1"
+                                    class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-[#ddbb98] focus:ring-[#ddbb98]"
+                            />
                         </div>
 
                         <button
                                 type="submit"
-                                class="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-150"
+                                class="w-full btn-primary text-white px-4 py-2 rounded-md hover:bg-[#d0a77f] transition-colors duration-150"
                         >
                             Add User
                         </button>
@@ -188,7 +274,7 @@
                 </div>
             </div>
 
-            <!-- Users Table -->
+            <!-- User List -->
             <div class="bg-white rounded-lg shadow-sm overflow-hidden">
                 <div class="p-6">
                     <h2 class="text-xl font-semibold mb-4">User List</h2>
@@ -198,41 +284,144 @@
                                 id="searchInput"
                                 class="w-full p-2 border rounded-lg"
                                 placeholder="Search users..."
-                        >
+                        />
                     </div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full">
                         <thead>
                         <tr class="bg-gray-100">
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Id Number</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Temperature</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Personal Number</th>
+                            <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Name
+                            </th>
+                            <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Id Number
+                            </th>
+                            <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Email
+                            </th>
+                            <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Last Login
+                            </th>
+                            <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Temperature
+                            </th>
+                            <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Personal Number
+                            </th>
                         </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                        <!-- Rows will be filled by tables.js -->
+                        <!-- User rows go here -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </main>
 
-        <footer class="w-full bg-white text-right p-4">
-            Built by <a target="_blank" href="#" class="underline">Leopold Weber</a>.
+        <!-- Edit User Modal -->
+        <div
+                id="editModal"
+                class="fixed inset-0 bg-gray-500 bg-opacity-75 hidden flex justify-center items-center"
+        >
+            <div class="bg-white rounded-lg p-8 w-1/2">
+                <h2 class="text-2xl font-semibold mb-4">Edit User</h2>
+                <form id="editForm" class="space-y-4">
+                    <input type="hidden" id="editId" />
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700"
+                        >First Name</label
+                        >
+                        <input
+                                type="text"
+                                id="editFirstName"
+                                class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-[#ddbb98] focus:ring-[#ddbb98]"
+                                required
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700"
+                        >Last Name</label
+                        >
+                        <input
+                                type="text"
+                                id="editLastName"
+                                class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-[#ddbb98] focus:ring-[#ddbb98]"
+                                required
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700"
+                        >Email</label
+                        >
+                        <input
+                                type="email"
+                                id="editEmail"
+                                class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-[#ddbb98] focus:ring-[#ddbb98]"
+                                required
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700"
+                        >Personal Number</label
+                        >
+                        <input
+                                type="text"
+                                id="editPersonalNumber"
+                                class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-[#ddbb98] focus:ring-[#ddbb98]"
+                                required
+                        />
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button
+                                type="button"
+                                onclick="closeEditModal()"
+                                class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md mr-2 hover:bg-gray-400"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                                type="submit"
+                                class="btn-primary text-white px-4 py-2 rounded-md hover:bg-[#d0a77f]"
+                        >
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="w-full header-bg   text-right p-4">
+            Built by <a target="_blank" href="http://www.leopoldweber.de" class="underline btn-primary">Leopold Weber</a>.
         </footer>
     </div>
 </div>
 
-<!-- Chart.js -->
+<!-- Chart.js (for charts) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Tables & Dashboard Script -->
+<!-- Your custom JS (e.g., tables.js) -->
 <script src="tables.js"></script>
-
+<script>
+    // Example function to close the edit modal
+    function closeEditModal() {
+        document.getElementById("editModal").classList.add("hidden");
+    }
+</script>
 </body>
 </html>

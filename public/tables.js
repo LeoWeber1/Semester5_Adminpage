@@ -18,10 +18,9 @@ async function fetchEmployees() {
 /**
  * Display employees in the HTML table
  */
-
 async function displayEmployees() {
     const employees = await fetchEmployees();
-    renderCharts(employees); // Charts aktualisieren
+    renderCharts(employees);
     const tableBody = document.querySelector('tbody.bg-white.divide-y');
     if (!tableBody) {
         console.error('Table body not found');
@@ -30,31 +29,28 @@ async function displayEmployees() {
 
     tableBody.innerHTML = ''; // Clear existing data
 
-    employees.forEach((log) => {
+    employees.forEach((employee) => {
         const row = document.createElement('tr');
         row.className = 'hover:bg-gray-50 transition-colors duration-150';
+        row.dataset.id = employee.id;
 
         // Create table columns with data
         const columns = [
-            log.id || 'N/A',
-            log.first_name || 'N/A',
-            log.last_name || 'N/A',
-            log.id_number || 'N/A',
-            log.email || 'N/A',
-            log.last_login || 'N/A',
-            log.temperature != null ? `${parseFloat(log.temperature).toFixed(1)}°C` : 'N/A',
-            log.threshold_value || 'N/A',
-            log.personal_number || 'N/A'
+            `${employee.first_name || 'N/A'} ${employee.last_name || ''}`,
+            employee.id_number || 'N/A',
+            employee.email || 'N/A',
+            employee.last_login ? new Date(employee.last_login).toLocaleString() : 'N/A',
+            employee.temperature != null ? `${parseFloat(employee.temperature).toFixed(1)}°C` : 'N/A', // Display temperature
+            employee.personal_number || 'N/A'
         ];
 
         columns.forEach((value, colIndex) => {
             const td = document.createElement('td');
             td.className = 'px-6 py-4 whitespace-nowrap text-sm text-gray-900';
 
-            // Special styling for temperature column
-            if (colIndex === 6 && value !== 'N/A') {
-                const temp = parseFloat(value);
-                const threshold = parseFloat(log.threshold_value || 37.5);
+            if (colIndex === 4 && value !== 'N/A') { // Temperature column
+                const temp = parseFloat(employee.temperature);
+                const threshold = parseFloat(employee.threshold_value || 37.5); // Make sure threshold_value is available or provide a default.
                 td.classList.add(temp >= threshold ? 'text-red-600' : 'text-green-600');
             }
 
@@ -62,10 +58,29 @@ async function displayEmployees() {
             row.appendChild(td);
         });
 
+        // Add action buttons
+        const actionsTd = document.createElement('td');
+        actionsTd.className = 'px-6 py-4 whitespace-nowrap text-sm font-medium';
+
+        // Edit button
+        const editBtn = document.createElement('button');
+        editBtn.className = 'text-blue-600 hover:text-blue-900 mr-2';
+        editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+        editBtn.addEventListener('click', () => openEditModal(employee));
+
+        // Delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'text-red-600 hover:text-red-900';
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+        deleteBtn.addEventListener('click', handleDelete);
+
+        actionsTd.appendChild(editBtn);
+        actionsTd.appendChild(deleteBtn);
+        row.appendChild(actionsTd);
+
         tableBody.appendChild(row);
     });
 
-    // Update dashboard metrics
     displayMetrics(employees);
 }
 
@@ -73,10 +88,8 @@ async function displayEmployees() {
  * Calculate and display metrics
  */
 function displayMetrics(employees) {
-    // Total users
     document.getElementById('totalUsers').textContent = employees.length;
 
-    // Average temperature
     const temps = employees
         .filter(emp => emp.temperature !== null && !isNaN(emp.temperature))
         .map(emp => parseFloat(emp.temperature));
@@ -85,13 +98,12 @@ function displayMetrics(employees) {
         : 0;
     document.getElementById('avgTemp').textContent = `${avgTemp}°C`;
 
-    // Total logins
     const totalLogins = employees.filter(emp => emp.last_login).length;
     document.getElementById('totalLogins').textContent = totalLogins;
 }
 
 /**
- * Setup search functionality for the table
+ * Setup search functionality
  */
 function setupSearch() {
     const searchInput = document.getElementById('searchInput');
@@ -113,189 +125,93 @@ function setupSearch() {
 }
 
 /**
- * Render dashboard charts
+ * Handle user deletion
  */
-let tempChartInstance;
+async function handleDelete(event) {
+    const row = event.target.closest('tr');
+    const employeeId = row.dataset.id;
 
-function renderCharts(employees) {
-    // Temperature Distribution Chart
-    const tempCtx = document.getElementById('temperatureChart')?.getContext('2d');
-    if (tempCtx) {
-        if (tempChartInstance) {
-            tempChartInstance.destroy(); // Vorheriges Diagramm entfernen
-        }
-
-        const tempRanges = {
-            'Normal (<37.5°C)': 0,
-            'Elevated (37.5-38.5°C)': 0,
-            'Fever (38.5-39.5°C)': 0,
-            'High Fever (>39.5°C)': 0
-        };
-
-        employees.forEach(emp => {
-            const temp = parseFloat(emp.temperature || 0);
-            if (temp < 37.5) tempRanges['Normal (<37.5°C)']++;
-            else if (temp >= 37.5 && temp < 38.5) tempRanges['Elevated (37.5-38.5°C)']++;
-            else if (temp >= 38.5 && temp <= 39.5) tempRanges['Fever (38.5-39.5°C)']++;
-            else if (temp > 39.5) tempRanges['High Fever (>39.5°C)']++;
-        });
-
-        tempChartInstance = new Chart(tempCtx, {
-            type: 'bar',
-            data: {
-                labels: Object.keys(tempRanges),
-                datasets: [{
-                    label: 'Number of Employees',
-                    data: Object.values(tempRanges),
-                    backgroundColor: [
-                        'rgba(75, 192, 192, 0.6)',  // green
-                        'rgba(255, 206, 86, 0.6)',  // yellow
-                        'rgba(255, 159, 64, 0.6)',  // orange
-                        'rgba(255, 99, 132, 0.6)'   // red
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    }
-
-
-
-    // 2. Role Distribution Chart
-    const roleCtx = document.getElementById('roleChart')?.getContext('2d');
-    if (roleCtx) {
-        // Count employees by role
-        const roleCount = employees.reduce((acc, emp) => {
-            acc[emp.role] = (acc[emp.role] || 0) + 1;
-            return acc;
-        }, {});
-
-        new Chart(roleCtx, {
-            type: 'doughnut',
-            data: {
-                labels: Object.keys(roleCount),
-                datasets: [{
-                    data: Object.values(roleCount),
-                    backgroundColor: [
-'rgba(54, 162, 235, 0.6)',
-    'rgba(75, 192, 192, 0.6)',
-    'rgba(255, 206, 86, 0.6)',
-    'rgba(255, 99, 132, 0.6)'
-],
-borderWidth: 1
-}]
-},
-options: {
-    responsive: true,
-        legend: {
-        position: 'bottom'
-    },
-    title: {
-        display: true,
-            text: 'Employee Role Distribution'
-    }
-}
-});
-}
-}
-
-/**
- * Setup logout functionality
- */
-function setupLogout() {
-    const logoutButton = document.getElementById('logout');
-    if (logoutButton) {
-        logoutButton.addEventListener('click', () => {
-            localStorage.removeItem('loggedInUser');
-            window.location.href = 'login.html';
-        });
-    }
-}
-
-/**
- * Initialize everything when DOM loads
- */
-function init() {
-    displayEmployees();
-    setupSearch();
-    setupLogout();
-}
-
-// Run initialization once
-if (!window.tableInitialized) {
-    window.tableInitialized = true;
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
-}
-
-// Add this to your tables.js file
-
-/**
- * Setup form submission handling
- */
-function setupAddUserForm() {
-    const form = document.getElementById('addUserForm');
-    const statusAlert = document.getElementById('statusAlert');
-    const statusMessage = document.getElementById('statusMessage');
-
-    if (!form) return;
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        // Collect form data
-        const formData = {
-            first_name: form.first_name.value,
-            last_name: form.last_name.value,
-            id_number: form.id_number.value,
-            email: form.email.value,
-            personal_number: form.personal_number.value,
-            temperature: null,
-            last_login: null
-        };
-
+    if (confirm('Are you sure you want to delete this user?')) {
         try {
-            const response = await fetch('http://localhost:3001/api/employees', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
+            const response = await fetch(`http://localhost:3001/api/employees/${employeeId}`, {
+                method: 'DELETE'
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to add user');
-            }
+            if (!response.ok) throw new Error('Delete failed');
 
-            // Show success message
-            showStatus('User added successfully!', 'success');
-
-            // Clear form
-            form.reset();
-
-            // Refresh the table
-            await displayEmployees();
-
+            row.remove();
+            showStatus('User deleted successfully!', 'success');
+            updateMetricsAfterDelete();
         } catch (error) {
-            console.error('Error adding user:', error);
-            showStatus('Failed to add user. Please try again.', 'error');
+            console.error('Delete error:', error);
+            showStatus('Failed to delete user', 'error');
         }
-    });
+    }
+}
+
+function updateMetricsAfterDelete() {
+    const totalUsers = document.getElementById('totalUsers');
+    totalUsers.textContent = parseInt(totalUsers.textContent) - 1;
 }
 
 /**
- * Display status message
+ * Edit user functionality
+ */
+let currentEditRow = null;
+
+function openEditModal(employee) {
+    currentEditRow = document.querySelector(`tr[data-id="${employee.id}"]`);
+    document.getElementById('editId').value = employee.id;
+    document.getElementById('editFirstName').value = employee.first_name;
+    document.getElementById('editLastName').value = employee.last_name;
+    document.getElementById('editEmail').value = employee.email;
+    document.getElementById('editPersonalNumber').value = employee.personal_number;
+    document.getElementById('editModal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').classList.add('hidden');
+    currentEditRow = null;
+}
+
+document.getElementById('editForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const updatedData = {
+        first_name: document.getElementById('editFirstName').value,
+        last_name: document.getElementById('editLastName').value,
+        email: document.getElementById('editEmail').value,
+        personal_number: document.getElementById('editPersonalNumber').value
+    };
+
+    try {
+        const response = await fetch(
+            `http://localhost:3001/api/employees/${document.getElementById('editId').value}`,
+            {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            }
+        );
+
+        if (!response.ok) throw new Error('Update failed');
+
+        // Update the table row
+        const cells = currentEditRow.cells;
+        cells[0].textContent = `${updatedData.first_name} ${updatedData.last_name}`;
+        cells[2].textContent = updatedData.email;
+        cells[5].textContent = updatedData.personal_number;
+
+        closeEditModal();
+        showStatus('User updated successfully!', 'success');
+    } catch (error) {
+        console.error('Update error:', error);
+        showStatus('Failed to update user', 'error');
+    }
+});
+
+/**
+ * Status message handling
  */
 function showStatus(message, type) {
     const statusAlert = document.getElementById('statusAlert');
@@ -310,20 +226,21 @@ function showStatus(message, type) {
     statusMessage.textContent = message;
     statusAlert.classList.remove('hidden');
 
-    // Hide the message after 3 seconds
     setTimeout(() => {
         statusAlert.classList.add('hidden');
     }, 3000);
 }
 
 /**
- * Modify your renderCharts function to only include the temperature chart
+ * Chart rendering
  */
+let tempChartInstance;
+
 function renderCharts(employees) {
-    // Temperature Distribution Chart
     const tempCtx = document.getElementById('temperatureChart')?.getContext('2d');
     if (tempCtx) {
-        // Group temperatures into ranges
+        if (tempChartInstance) tempChartInstance.destroy();
+
         const tempRanges = {
             'Normal (<37.5°C)': 0,
             'Elevated (37.5-38.5°C)': 0,
@@ -334,12 +251,12 @@ function renderCharts(employees) {
         employees.forEach(emp => {
             const temp = parseFloat(emp.temperature || 0);
             if (temp < 37.5) tempRanges['Normal (<37.5°C)']++;
-            else if (temp >= 37.5 && temp < 38.5) tempRanges['Elevated (37.5-38.5°C)']++;
-            else if (temp >= 38.5 && temp <= 39.5) tempRanges['Fever (38.5-39.5°C)']++;
-            else if (temp > 39.5) tempRanges['High Fever (>39.5°C)']++;
+            else if (temp < 38.5) tempRanges['Elevated (37.5-38.5°C)']++;
+            else if (temp <= 39.5) tempRanges['Fever (38.5-39.5°C)']++;
+            else tempRanges['High Fever (>39.5°C)']++;
         });
 
-        new Chart(tempCtx, {
+        tempChartInstance = new Chart(tempCtx, {
             type: 'bar',
             data: {
                 labels: Object.keys(tempRanges),
@@ -347,10 +264,10 @@ function renderCharts(employees) {
                     label: 'Number of Employees',
                     data: Object.values(tempRanges),
                     backgroundColor: [
-                        'rgba(75, 192, 192, 0.6)',  // green
-                        'rgba(255, 206, 86, 0.6)',  // yellow
-                        'rgba(255, 159, 64, 0.6)',  // orange
-                        'rgba(255, 99, 132, 0.6)'   // red
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(255, 159, 64, 0.6)',
+                        'rgba(255, 99, 132, 0.6)'
                     ],
                     borderWidth: 1
                 }]
@@ -358,9 +275,7 @@ function renderCharts(employees) {
             options: {
                 responsive: true,
                 scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+                    y: { beginAtZero: true }
                 }
             }
         });
@@ -368,11 +283,78 @@ function renderCharts(employees) {
 }
 
 /**
- * Update your init function to include the form setup
+ * User management form handling
+ */
+/**
+ * User management form handling
+ */
+function setupAddUserForm() {
+    const form = document.getElementById('addUserForm');
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = {
+            first_name: form.first_name.value,
+            last_name: form.last_name.value,
+            id_number: form.id_number.value,
+            email: form.email.value,
+            personal_number: form.personal_number.value,
+            temperature: form.temperature.value || null, // Get temperature value, allow null
+            last_login: null // last_login will be handled by the server (creation time)
+        };
+
+        try {
+            const response = await fetch('http://localhost:3001/api/employees', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json(); // Parse response body
+            if (!response.ok) throw new Error(data.error || 'Failed to add user');
+
+            showStatus('User added successfully!', 'success');
+            form.reset();
+            await displayEmployees();
+        } catch (error) {
+            console.error('Error adding user:', error);
+            showStatus(error.message || 'Failed to add user. Please try again.', 'error');
+        }
+    });
+}
+
+
+/**
+ * Logout handling
+ */
+function setupLogout() {
+    const logoutButton = document.getElementById('logout');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('loggedInUser');
+            window.location.href = 'login.html';
+        });
+    }
+}
+
+/**
+ * Initialize application
  */
 function init() {
     displayEmployees();
     setupSearch();
     setupLogout();
-    setupAddUserForm();  // Add this line
+    setupAddUserForm();
+
+    // Close modal on outside click
+    document.getElementById('editModal').addEventListener('click', (e) => {
+        if (e.target.id === 'editModal') closeEditModal();
+    });
+}
+
+if (!window.tableInitialized) {
+    window.tableInitialized = true;
+    document.addEventListener('DOMContentLoaded', init);
 }

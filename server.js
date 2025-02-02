@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import { exec } from 'child_process';
 import pool from './db.js';
 import cors from 'cors';
+import bcrypt from 'bcrypt'; // Import bcrypt for password hashing
+import jwt from 'jsonwebtoken'; // Import jsonwebtoken for JWT generation
 
 dotenv.config();
 
@@ -64,10 +66,13 @@ app.post('/api/register', async (req, res) => {
             return res.status(400).json({ error: 'Username already exists' });
         }
 
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
+
         // Insert new user into users table
         const newUser = await pool.query(
             'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *',
-            [username, password]
+            [username, hashedPassword]
         );
 
         res.status(201).json({
@@ -81,7 +86,6 @@ app.post('/api/register', async (req, res) => {
 });
 
 // ========== Login Existing User ==========
-
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
 
@@ -97,7 +101,7 @@ app.post('/api/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // Optional: Generate a JWT token
+        // Generate a JWT token
         const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         return res.json({ id: user.id, username: user.username, token });
@@ -122,26 +126,73 @@ app.get('/api/employees', async (req, res) => {
 // ========== Add New Employee ==========
 app.post('/api/employees', async (req, res) => {
     try {
-        const { first_name, last_name, id_number, email, personal_number } = req.body;
+        const { first_name, last_name, id_number, email, personal_number, temperature } = req.body; // Include temperature
 
         if (!first_name || !last_name || !id_number || !email || !personal_number) {
-            return res.status(400).json({ error: 'All fields are required' });
+            return res.status(400).json({ error: 'First name, last name, id number, email, and personal number are required' }); // Updated error message
         }
 
         const query = `
-            INSERT INTO employees (first_name, last_name, id_number, email, personal_number)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO employees (first_name, last_name, id_number, email, personal_number, temperature)  -- Add temperature to the query
+            VALUES ($1, $2, $3, $4, $5, $6)                                                              -- Add $6 placeholder
             RETURNING *`;
-        const values = [first_name, last_name, id_number, email, personal_number];
+        const values = [first_name, last_name, id_number, email, personal_number, temperature || null];      // Add temperature value, allow null
 
         const result = await pool.query(query, values);
-        console.log('Added employee:', result.rows[0]);
         res.status(201).json({ message: 'Employee added successfully', employee: result.rows[0] });
     } catch (error) {
         console.error('Error adding employee:', error.message);
+        if (error.code === '23505') { // PostgreSQL unique violation code
+            return res.status(400).json({ error: 'ID number or email already exists' });
+        }
         res.status(500).json({ error: 'Server error adding employee' });
     }
 });
+
+// ========== Update Employee ==========
+app.put('/api/employees/:id', async (req, res) => {
+    try {
+        const { first_name, last_name, email, personal_number } = req.body;
+        const { id } = req.params;
+
+        const query = `
+            UPDATE employees
+            SET first_name = $1, last_name = $2, email = $3, personal_number = $4
+            WHERE id = $5
+            RETURNING *`;
+        const values = [first_name, last_name, email, personal_number, id];
+
+        const result = await pool.query(query, values);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'Employee not found' });
+        }
+
+        res.json({ message: 'Employee updated successfully', employee: result.rows[0] });
+    } catch (error) {
+        console.error('Error updating employee:', error.message);
+        res.status(500).json({ error: 'Server error updating employee' });
+    }
+});
+
+
+// ========== Delete Employee ==========
+app.delete('/api/employees/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await pool.query('DELETE FROM employees WHERE id = $1 RETURNING *', [id]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'Employee not found' });
+        }
+
+        res.json({ message: 'Employee deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting employee:', error.message);
+        res.status(500).json({ error: 'Server error deleting employee' });
+    }
+});
+
 
 // ========== Default Page ==========
 app.get('/', (req, res) => {
