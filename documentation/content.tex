@@ -3,29 +3,46 @@
 
 \todo[inline, color=green]{Jan}
 
+Diese Dokumentation fasst die Aufgabenstellung, Rahmenbedingungen sowie Abnahme- und Lieferbedingungen unseres Projekts zusammen. Es dient als Leitfaden für die Zusammenarbeit zwischen unserem Team und dem Auftraggeber, um sicherzustellen, dass alle Erwartungen klar erfüllt sind. Unser Ziel ist es, ein Zugangssystem zu entwickeln, das die klassische RFID-Authentifizierung um eine Temperaturmessung erweitert. Dabei soll am Eingang eines Firmengebäudes ein Terminal installiert werden, das die RFID-Authentifizierung und die Temperaturmessung durchführt. Die Systemkomponenten sollen über ein Firmennetzwerk mit einem zentralen Masterserver verbunden werden. Dieser soll als Steuereinheit für die Verwaltung von Benutzerinformationen, Zugangsprotokollen und Temperaturgrenzwerten dienen.
+
+\vspace{1em}
+\noindent Unser Team besteht aus vier Mitgliedern: Simon Schneider, unser Teamleiter, koordiniert das Projekt. Janis Preiß kümmert sich um Hardware und Elektrik, Leopold Weber entwickelt die Benutzeroberfläche, und Jan-Niclas Fenger ist für die Prozessprogrammierung verantwortlich.\todo{Wer, wo?} Zusammen bringen wir eine Kombination aus Fachwissen, IT-Kenntnissen und Organisationstalent mit.
+
+\vspace{1em}
+\noindent Für das Projekt hatten wir vordergründlich Zugang zu einem Raspberry Pi, einem Wemos Modul und einem Infrarot-Temperatursensor.\todo{Passt das so?} Mit einem Budget von 50 Euro konnten wir alle notwendigen Komponenten beschaffen. Dieses Projekt gab uns die Möglichkeit, theoretisches Wissen in der IT und Elektrotechnik praktisch anzuwenden. Im Folgenden erklären wir, wie wir dieses Projekt erfolgreich umgesetzt haben.
 
 \section{Einleitung}\label{sec:einleitung}
 
 \todo[inline, color=green]{Jan}
 
-
 \subsection{Kontext/Hintergrund}
+
+Spätestens seit der Corona-Pandemie ist bekannt, dass es wichtig ist, dass nur gesunde Mitarbeiter zur Arbeit kommen. Dies hat Vorteile für Arbeitgeber und Arbeitnehmer. 
+
+\vspace{1em}
+\noindent Für Arbeitgeber bedeutet dies weniger krankheitsbedingte Ausfälle und damit eine höhere Produktivität. Für Arbeitnehmer hingegen fördert eine gesunde Belegschaft ein angenehmes Arbeitsklima und minimiert das Risiko, sich am Arbeitsplatz anzustecken.
 
 
 \subsection{Projekt Motivation}
 
+Die Motivation hinter diesem Projekt liegt in der Kombination von Gesundheitsschutz und praktischer Anwendung. Durch die Analyse und Darstellung der Messwerte einer Körpertemperaturmessung möchten wir dem Mitarbeiter aufzeigen, dass er unter Umständen mit einer Krankheit infiziert ist, obwohl er keine körperlichen Symptome aufweist. Damit würde er ein Gesundheitsrisiko für andere Mitarbeiter darstellen und womöglich seine eigene Gesundheit gefährden oder seine Genesung hinauszögern.
+Des Weiteren ist es auch unser persönliches Interesse, uns mit IT-Systemen wie SQLite3, PostgreSQL, Webprogrammierung und dem Einsatz von Mikrocontrollern und Sensoren auseinanderzusetzen und durch dieses Projekt vertiefen zu können.
 
 \subsection{Problemstellung}
 
+In vielen Unternehmen erfolgt der Zutritt zu Gebäuden durch eine RFID-basierte Zugangskontrolle. Dabei gibt es jedoch keine Möglichkeit, den Gesundheitszustand der Mitarbeiter zu überprüfen, insbesondere im Hinblick auf ansteckende Krankheiten. Dies kann dazu führen, dass erkrankte Personen unbemerkt das Gebäude betreten und möglicherweise Kollegen anstecken. Um das Infektionsrisiko zu minimieren und die Produktivität im Unternehmen aufrechtzuerhalten, ist eine Lösung erforderlich, die über die reine Authentifizierung hinausgeht und eine Gesundheitsüberprüfung integriert.
 
 \subsection{Projektziele}
 
+Das Ziel des Projekts \textit{„The Health Checker“} ist die Entwicklung eines Zugangssystems, das neben der klassischen RFID-Authentifizierung auch eine Körpertemperaturmessung durchführt. Mitarbeiter erhalten nur dann Zutritt zum Gebäude, wenn ihre Temperatur innerhalb eines vordefinierten Bereichs liegt. Das System soll zuverlässig arbeiten, die erfassten Daten sicher in einer zentralen Datenbank speichern und eine benutzerfreundliche Web-GUI zur Verwaltung der Zugangsdaten und Temperaturgrenzwerte bereitstellen. Damit soll ein Beitrag zur Gesundheitsprävention im Unternehmen geleistet werden.
 
 \subsection{Projektumfang}
 
+Das Projekt umfasst die Entwicklung und Implementierung eines Zugangsterminals, das mit einem RFID-Reader sowie einem Infrarot-Temperatursensor ausgestattet ist. Die erfassten Daten werden über ein Firmennetzwerk an einen zentralen Masterserver übertragen, der die Authentifizierung und Temperaturüberprüfung durchführt. Eine relationale Datenbank dient zur Speicherung der Benutzerinformationen und Zugangsdaten. Zur Systemkonfiguration und Verwaltung wird eine Web-GUI entwickelt, die über gängige Endgeräte zugänglich ist. Das Projekt beinhaltet außerdem die Validierung der Temperaturmessung, die Integration in bestehende IT-Systeme sowie Sicherheitsmaßnahmen zum Schutz der gespeicherten Daten.
 
 \subsection{Übersicht über die Dokumentation}
 
+Diese Dokumentation beginnt mit einer ausführlichen Beschreibung unserer Methodik. Danach folgt ein Überblick über das Design und die Implementierung unseres Systems. Anschließend werden die Ergebnisse präsentiert und deren Diskussion behandelt. Abschließend wird die Implementierung des Systems kritisch betrachtet und Ideen für zukünftige Arbeiten gegeben.
 
 \section{Methodik}\label{sec:methodik}
 
@@ -34,7 +51,7 @@
 
 \subsection{Prinzipienschaltbild}\label{subsec:prinzipienschaltbild}
 
-Der prinzipielle Aufbau des Projekts wurde zuerst erstellt und in einem Blockdiagramm dargestellt, dass die verschiedenen Komponenten und deren Verbindungen veranschaulicht. Dieses Diagramm zeigt den Fluss des Zugangskontrollsystem von Authentifizierung und Temperaturmessung über das Schreiben in die Datenbank bis hin zur Ansteuerung der Drehkreuzes und der Lichtschranken.
+Der prinzipielle Aufbau des Projekts wurde zuerst erstellt und in einem Blockdiagramm dargestellt, dass die verschiedenen Komponenten und deren Verbindungen veranschaulicht. Dieses Diagramm zeigt den Fluss des Zugangskontrollsystem von Authentifizierung und Temperaturmessung über das Schreiben in die Datenbank bis hin zur Ansteuerung des Drehkreuzes und der Lichtschranken.
 \todo{Bildgröße am Ende anpassen}
 
 \begin{figure}[h]
@@ -99,7 +116,7 @@ Die ausgewählten Komponenten bieten eine effiziente und zuverlässige Lösung f
 
 \subsubsection{Allgemein}
 
-Anhand der Anforderung an das System wurde sich für ein verteiltes, netzwerkgebundenes System entschieden. Hier wurden drei Teilbereiche definiert, auf die im Weiteren genauer eingegangen wird.
+Anhand der Anforderung an das System viel die Wahl auf ein verteiltes, netzwerkgebundenes System. Hier wurden drei Teilbereiche definiert, auf die im Weiteren genauer eingegangen wird.
 
 \subsubsection{Raspberry-Pi}
 
@@ -107,7 +124,7 @@ Den Startpunkt des Zugangssystems stellt der Raspberry-Pi mit Display und seinen
 
 \subsubsection{Wemos-Modul}
 
-Nach erfolgreicher Authentifizierung und Temperaturmessung wird die Eingangslichtschranke für eine gewisse Zeit aktiviert, welche bei nicht durchschreiten deaktiviert wird. Wird aber die Lichtschranke durchbrochen, so dreht sich der Steppermotor, auf dem ein Drehkreuz montiert wurde. Am Ausgang ist ebenso ein Lichtschranke montiert, welche dauerhaft aktiv ist. Diese sorgt erwartungsgemäß dafür, dass der Motor sich in die Gegenrichtung dreht. Die Drei Komponenten sind zur einfachen Ansteuerung an ein Wemos-Modul angeschlossen.
+Nach erfolgreicher Authentifizierung und Temperaturmessung wird die Eingangslichtschranke für eine gewisse Zeit aktiviert, welche bei nicht durchschreiten deaktiviert wird. Wird aber die Lichtschranke durchbrochen, so dreht sich der Steppermotor, auf dem ein Drehkreuz montiert wurde. Am Ausgang ist ebenso ein Lichtschranke montiert, welche dauerhaft aktiv ist. Diese sorgt erwartungsgemäß dafür, dass der Motor sich in die Gegenrichtung dreht. Die drei Komponenten sind zur einfachen Ansteuerung an ein Wemos-Modul angeschlossen.
 
 \subsubsection{Web-Datenbank-Server}
 
@@ -205,13 +222,13 @@ Für die Umsetzung der Webanwendung haben wir uns für einen aktuellen Technolog
 Das Benutzerterminal selbst setzt einen Fokus auf Performance und aktuelle Technologien, welche die beiden Vorteile gut kombiniert:
 
 \begin{itemize}
-    \item Python:\\
+    \item \textbf{Python:}\\
     Für die Logik und Visualisierung der Benutzerinformationen wird Python verwendet, da es schon viele Bibliotheken gibt, welche eine einfache sowie performante Ansteuerung der benötigten Komponenten ermöglicht.
-    \item C++:\\
+    \item \textbf{C++:}\\
     Für das Wemos-Modul wurde C++ aufgrund seiner hohen Performance und der direkten Kontrolle über den Mikrocontroller gewählt. Es ermöglicht eine effiziente Steuerung der Lichtschranken und des Steppermotors. Durch die Nutzung von C++ können Echtzeitanforderungen optimal umgesetzt und die Leistung des Systems maximiert werden, was für die zuverlässige Funktionalität der Komponenten entscheidend ist.
-    \item PyQt5:\\
+    \item \textbf{PyQt5:}\\
     PyQt5 ist ein leistungsfähiges GUI-Framework, welches eine umfangreiche Sammlung an Widgets besitzt und die einfache Erstellung moderner, plattformübergreifender Benutzeroberflächen ermöglicht.
-    \item MQTT:\\
+    \item \textbf{MQTT:}\\
     Für den Abgleich der Benutzerdaten wird MQTT eingestzt. Das leichtgewichtige und effiziente Prokoll bietet Datenübertragung in Echtzeit. Somit ist eine schnelle und zuverlässige Kommunikation zwischen dem Terminal und dem Datenbankserver möglich. 
 \end{itemize}
 
@@ -368,8 +385,6 @@ Die API unterstützt die Benutzer- und Mitarbeiterverwaltung sowie die Kommunika
 \section{Ergebnisse und Diskussion}
 \label{sec:ergebnisse_und_diskussion}
 
-\todo[inline, color=green]{Janis}
-
 \subsection{Messwerte \& Diskussion}
 
 \subsubsection{Datenüberblick}
@@ -399,6 +414,7 @@ Die wichtigsten Messwerte wurden analysiert:
     \item \textbf{Netzwerkanbindung: }Verzögerungen durch WLAN-Probleme, Lösung durch kabelgebundene Alternativen in zukünftigen Versionen.
     \item \textbf{Datenspeicherung: }Skalierbarkeit der PostgreSQL-Datenbank für größere Benutzerzahlen getestet.
 \end{itemize}
+\clearpage
 
 \subsection{Abnahmekriterien}
 
