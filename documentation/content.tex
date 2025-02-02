@@ -1,12 +1,10 @@
 
-\section{Zusammenfassung}
-\label{sec:zusammenfassung}
+\section{Zusammenfassung}\label{sec:zusammenfassung}
 
 \todo[inline, color=green]{Jan}
 
 
-\section{Einleitung}
-\label{sec:einleitung}
+\section{Einleitung}\label{sec:einleitung}
 
 \todo[inline, color=green]{Jan}
 
@@ -29,14 +27,12 @@
 \subsection{Übersicht über die Dokumentation}
 
 
-\section{Methodik}
-\label{sec:methodik}
+\section{Methodik}\label{sec:methodik}
 
 \todo[inline, color=green]{Simon}
 
 
-\subsection{Prinzipienschaltbild}
-\label{subsec:prinzipienschaltbild}
+\subsection{Prinzipienschaltbild}\label{subsec:prinzipienschaltbild}
 
 Der prinzipielle Aufbau des Projekts wurde zuerst erstellt und in einem Blockdiagramm dargestellt, dass die verschiedenen Komponenten und deren Verbindungen veranschaulicht. Dieses Diagramm zeigt den Fluss des Zugangskontrollsystem von Authentifizierung und Temperaturmessung über das Schreiben in die Datenbank bis hin zur Ansteuerung der Drehkreuzes und der Lichtschranken.
 \todo{Bildgröße am Ende anpassen}
@@ -48,8 +44,7 @@ Der prinzipielle Aufbau des Projekts wurde zuerst erstellt und in einem Blockdia
 \end{figure}
 
 
-\subsection{Die Wahl der Hardware}
-\label{subsec:die_wahl_der_hardware}
+\subsection{Die Wahl der Hardware}\label{subsec:die_wahl_der_hardware}
 
 \subsubsection{Raspberry-Pi}
 
@@ -100,6 +95,29 @@ Für die Netzwerkkommunikation wird ein Switch eingesetzt, um die Verbindung zwi
 Die ausgewählten Komponenten bieten eine effiziente und zuverlässige Lösung für das Zugangskontrollsystem. Sie ermöglichen eine benutzerfreundliche Interaktion, präzise Erfassung von Daten und Sicherheitsüberprüfungen. Ein zentraler Server verwaltet die Daten, während eine stabile Netzwerkverbindung die Kommunikation zwischen den Geräten sicherstellt. So wird eine zuverlässige Steuerung und Überwachung des Zugangsprozesses gewährleistet.
 
 
+\subsection{Grundlegender Aufbau}\label{subsec:grundlegender_aufbau}
+
+\subsubsection{Allgemein}
+
+Anhand der Anforderung an das System wurde sich für ein verteiltes, netzwerkgebundenes System entschieden. Hier wurden drei Teilbereiche definiert, auf die im Weiteren genauer eingegangen wird.
+
+\subsubsection{Raspberry-Pi}
+
+Den Startpunkt des Zugangssystems stellt der Raspberry-Pi mit Display und seinen Komponenten (siehe 3.1 Prinzipienschaltbild) bereit. Hierbei authentifiziert sich der Mitarbeiter mit seinem RFID-Tag über einen entsprechenden RFID-Reader. Der Abgleich findet über MQTT mit dem Datenbankserver statt. Nach erfolgreicher Validierung der Identität wird die Körpertemperatur kontaktlos über einen Infrarot-Temperatursensor gemessen. Der Abgleich findet wie bei der Authentifizierung statt. Neben visuellen Darstellungen auf dem Display gibt es auch akustische Signale von einem Piezo Buzzer. Da es auch weniger frequentierte Zeiten am Terminal gibt, kann es auch vorkommen, dass das Terminal im Ruhemodus sich befindet. Um dies wieder zu aktivieren wird ein Näherungssensor eingesetzt.
+
+\subsubsection{Wemos-Modul}
+
+Nach erfolgreicher Authentifizierung und Temperaturmessung wird die Eingangslichtschranke für eine gewisse Zeit aktiviert, welche bei nicht durchschreiten deaktiviert wird. Wird aber die Lichtschranke durchbrochen, so dreht sich der Steppermotor, auf dem ein Drehkreuz montiert wurde. Am Ausgang ist ebenso ein Lichtschranke montiert, welche dauerhaft aktiv ist. Diese sorgt erwartungsgemäß dafür, dass der Motor sich in die Gegenrichtung dreht. Die Drei Komponenten sind zur einfachen Ansteuerung an ein Wemos-Modul angeschlossen.
+
+\subsubsection{Web-Datenbank-Server}
+
+Für die Speicherung und Verwaltung der Benutzerzugänge und Grenzwerte wurde ein Web-Datenbank-Server aufgestzt. Hierbei wurden die beiden Aufgbaben in einem Server vereint, da dies eine noch einfacheren Abgleich der Nutzerdaten ermöglicht und es auch Standard bei einer solchen Art von Systemen darstellt.
+
+\subsubsection{Zusammenfassung}
+
+Durch die Verteilung der Komponenten auf einzelne Teile bietet es dem späteren Kunden eine einfache Implementierung, da dies Step-by-Step stattfinden kann. Außerdem bietet es die Möglichkeit das System mit weiteren Komponenten zu erweitern oder einen modularen Zusammenbau des Systems.
+
+
 \subsection{Bestimmung der Messwerte}
 
 Im Rahmen der Implementierung des Zugangskontrollsystems werden verschiedene Messwerte erfasst, um die Funktionalität des Systems sicherzustellen. Die Messwerte werden kontinuierlich überprüft und validiert, um die Genauigkeit und Zuverlässigkeit der Systeme zu gewährleisten.
@@ -119,21 +137,17 @@ Der Abstand wird durch einen Ultraschallsensor gemessen, der die Entfernung zum 
 \noindent Die Messwerte des Ultraschallsensors wurden durch den Vergleich mit einer physischen Messung mit einem Meterstab validiert. Der ermittelte Wert des Sensors wurde mit den Werten des Meterstabs verglichen, um sicherzustellen, dass die Entfernungsmessung korrekt ist. Diese Methode gewährleistet eine präzise Erkennung der Annäherung eines Mitarbeiters an das System.
 
 
-\section{Software und User Interface}
-\label{sec:software_und_user_interface}
+\section{Software und User Interface}\label{sec:software_und_user_interface}
 
 \todo[inline, color=green]{Leopold}
 
 
-\subsection{Messsoftware}
-\label{subsec:messsoftware}
+\subsection{Programmstruktur}\label{subsec:programmstruktur}
 
-Die Messsoftware dieses Projekts setzt sich aus mehreren Programmen zusammen.
-Die genaue Funktionsweise und Interaktionen der einzelnen Programme miteinander werden nun im Folgenden erklärt.
+Die Software in diesem Projekt setzt sich aus mehreren Programmen zusammen. Die genaue Funktionsweise und Interaktionen der einzelnen Programme miteinander werden nun im Folgenden erklärt. Eine weiterführende Dokumentation sowie der Quellcode der Software sind auf folgendem GitHub Repository hinterlegt:\\ \url{https://github.com/LeoWeber1/Semester5_Adminpage}
 
 
-\subsection{Datenbanksystem}
-\label{subsec:datenbanksystem}
+\subsection{Datenbanksystem}\label{subsec:datenbanksystem}
 
 
 \subsubsection{Einführung}
@@ -160,8 +174,7 @@ Um die gleichzeitige Nutzung durch mehrere Anwendungen zu ermöglichen, wurde au
 Aktuell läuft der PostgreSQL-Server auf einem Raspberry Pi. Eine zukünftige Weiterentwicklung sieht jedoch den Betrieb auf einem zentralen Server vor, wobei einzelne Komponenten wie die grafische Benutzeroberfläche (GUI) ebenfalls ausgelagert werden könnten.
 
 
-\subsubsection{Schematischer Aufbau}
-\label{subsubsec:schematischer_aufbau}
+\subsubsection{Schematischer Aufbau}\label{subsubsec:schematischer_aufbau}
 
 \begin{figure}[h]
 	\centering
@@ -171,15 +184,12 @@ Aktuell läuft der PostgreSQL-Server auf einem Raspberry Pi. Eine zukünftige We
 \todo{Bildgröße am Ende anpassen}
 
 
-\subsubsection{Zusammenfassung}
-\label{subsubsec:zusammenfassung}
+\subsubsection{Zusammenfassung}\label{subsubsec:zusammenfassung}
 
 Durch PostgreSQL wird ein robustes und flexibles Datenbanksystem geschaffen, das die Vorteile beider Technologien vereint. Das Frontend in Python erlaubt eine lokale Steuerung, während die Website als Verwaltungspunkt für einen Admin dient. Insgesamt lässt sich das System als lehr- und praxisnah bewerten.
 
 
-\subsection{Technologien und Architektur}
-\label{subsec:technologien_und_architektur}
-
+\subsection{Technologien und Architektur (Webanwendung)}
 
 Für die Umsetzung der Webanwendung haben wir uns für einen aktuellen Technologie-Stack entschieden, der uns viel Flexibilität und eine klare Struktur bietet:
 
@@ -190,16 +200,29 @@ Für die Umsetzung der Webanwendung haben wir uns für einen aktuellen Technolog
     \item \textbf{Responsive Design:}\newline Dank moderner CSS-Frameworks und responsiven Layouts passt sich die Anwendung automatisch an verschiedene Geräte an – egal, ob auf dem Desktop oder auf mobilen Geräten.
 \end{itemize}
 
+\subsection{Technologien und Architektur (Benutzerterminal)}
 
-\subsection{Benutzerinterface und Funktionalitäten}
-\label{subsec:benutzerinterface_und_funktionalitäten}
+Das Benutzerterminal selbst setzt einen Fokus auf Performance und aktuelle Technologien, welche die beiden Vorteile gut kombiniert:
+
+\begin{itemize}
+    \item Python:\\
+    Für die Logik und Visualisierung der Benutzerinformationen wird Python verwendet, da es schon viele Bibliotheken gibt, welche eine einfache sowie performante Ansteuerung der benötigten Komponenten ermöglicht.
+    \item C++:\\
+    Für das Wemos-Modul wurde C++ aufgrund seiner hohen Performance und der direkten Kontrolle über den Mikrocontroller gewählt. Es ermöglicht eine effiziente Steuerung der Lichtschranken und des Steppermotors. Durch die Nutzung von C++ können Echtzeitanforderungen optimal umgesetzt und die Leistung des Systems maximiert werden, was für die zuverlässige Funktionalität der Komponenten entscheidend ist.
+    \item PyQt5:\\
+    PyQt5 ist ein leistungsfähiges GUI-Framework, welches eine umfangreiche Sammlung an Widgets besitzt und die einfache Erstellung moderner, plattformübergreifender Benutzeroberflächen ermöglicht.
+    \item MQTT:\\
+    Für den Abgleich der Benutzerdaten wird MQTT eingestzt. Das leichtgewichtige und effiziente Prokoll bietet Datenübertragung in Echtzeit. Somit ist eine schnelle und zuverlässige Kommunikation zwischen dem Terminal und dem Datenbankserver möglich. 
+\end{itemize}
+
+\subsection{Benutzerinterface und Funktionalitäten (Webanwendung)}
 
 Das Benutzerinterface ist in mehrere Bereiche unterteilt, um die Bedienung möglichst einfach zu gestalten. 
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=0.4\linewidth]{figures/GUI.jpeg}
-	\caption[GUI]{Ausschnitt aus dem Graphical User Interface (GUI)}\label{fig:gui}
+	\caption[GUI]{Ausschnitt aus der GUI der Webanwendung}\label{fig:gui}
 \end{figure}
 \todo{Bildgröße am Ende anpassen}
 
@@ -218,9 +241,29 @@ Das Benutzerinterface ist in mehrere Bereiche unterteilt, um die Bedienung mögl
 \noindent\textbf{Fazit:}\newline
 Durch die Kombination dieser Technologien entstand eine benutzerfreundliche Webanwendung, die alle wichtigen Daten zentral anzeigt und verwaltet. Die modulare Architektur erlaubt zudem eine einfache Erweiterung, falls zukünftig weitere Anpassungen notwendig werden falls unser Projekt jemals in Produktion gehen würde.
 
+\subsection{Benutzerinterface und Funktionalitäten (Benutzerterminal)}
 
-\subsection{API-Dokumentation}
-\label{subsec:api-dokumentation}
+Im Benutzerterminal wurde ebenso das Interface in mehrere Bereiche aufgeteilt.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.4\linewidth]{figures/GUI Benutzerterminal.jpg}
+	\caption[GUI Benutzerterminal]{Ausschnitt aus der GUI des Benutzerterminals}\label{fig:gui}
+\end{figure}
+\todo{Bildgröße am Ende anpassen}
+
+\vspace{1em}
+\noindent Im linken Bereich werden aktuelle Informationen zum aktuellen Mitarbeiter angezeigt, wie den Namen und die Personalnummer sowie wie weit der Zugangsablauf aktuell ist oder ob bei einem Schritt ein Fehler aufgetreten ist. Somit kann der Mitarbeiter bei einer Verweigerung des Zutritts erkennen, woran es gescheitert ist.
+
+\vspace{1em}
+\noindent Informationen zum aktuellen Vorgang und die aktuelle Uhrzeit kann in der mittleren Spalte erkannt werden. Hierbei wird dargestellt, was das Terminal aktuell im Hintergrund durchführt.
+Allgemeine Informationen zum Unternehmen finden im rechten Bereich Platz, um nochmals zu visualisieren, welches Unternehmen dieses Terminal im Einsatz hat.
+
+\vspace{1em}
+\noindent \textbf{Fazit: }\\
+Die Mischung aus einfachen und trotzdem klar verständlichen Informationen stellt eine gute und leicht verständliche Bedienoberfläche da. Dies ermöglicht auch weniger technikvisierten Mitarbeitern einen leichten Umgang mit dem Zungangskontrollsystem.
+
+\subsection{API-Dokumentation}\label{subsec:api-dokumentation}
 
 Die API unterstützt die Benutzer- und Mitarbeiterverwaltung sowie die Kommunikation mit der Datenbank. Im Folgenden sind die wichtigsten Endpunkte und deren Funktion kurz zusammengefasst.
 
@@ -300,7 +343,7 @@ Die API unterstützt die Benutzer- und Mitarbeiterverwaltung sowie die Kommunika
     \end{itemize}
 \end{itemize}
 
-\textbf{Neuen Mitarbeiter hinzufügen}
+\noindent\textbf{Neuen Mitarbeiter hinzufügen}
 \begin{itemize}
     \item \textbf{Methode: }POST 
     \item \textbf{Endpoint: }/api/employess  
