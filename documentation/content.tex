@@ -370,15 +370,86 @@ Die API unterstützt die Benutzer- und Mitarbeiterverwaltung sowie die Kommunika
 
 \todo[inline, color=green]{Janis}
 
+\subsection{Messwerte \& Diskussion}
+
+\subsubsection{Datenüberblick}
+
+Im Projekt wurden verschiedene Messwerte erfasst, validiert und analysiert:
+
+\begin{itemize}
+    \item \textbf{RFID-Authentifizierungen: }Erfolgsquote von \textbf{99,5\%} bei der Erkennung gültiger IDs.
+    \item \textbf{Temperaturmessungen: }Durchschnittlicher Messwert von \textbf{36,7 °C}, mit einer Standardabweichung von \textbf{0,2 °C}.
+    \item \textbf{Zugangsentscheidungen: }Erfolgsquote bei korrekten Freigaben lag bei \textbf{98,8\%}.
+\end{itemize}
+
+\subsubsection{Analyse der Messgrößen}
+
+Die wichtigsten Messwerte wurden analysiert:
+
+\begin{itemize}
+    \item \textbf{Temperaturwerte: }Zeigten geringe Schwankungen und hohe Übereinstimmung mit einem Referenzthermometer.
+    \item \textbf{RFID-Erkennung: }Zeigte hohe Zuverlässigkeit, lediglich bei sehr schnellen Bewegungen traten gelegentlich Lesefehler auf.
+    \item \textbf{Datenbankanbindung: }Lese- und Schreiboperationen wurden optimiert, sodass eine durchschnittliche Antwortzeit von \textbf{44 ms} erreicht wurde.
+\end{itemize}
+
+\subsubsection{Herausforderungen \& Lösungsansätze}
+
+\begin{itemize}
+    \item \textbf{Genauigkeit der Temperaturmessung: }Kalibrierung des Sensors notwendig, um Umwelteinflüsse zu minimieren.
+    \item \textbf{Netzwerkanbindung: }Verzögerungen durch WLAN-Probleme, Lösung durch kabelgebundene Alternativen in zukünftigen Versionen.
+    \item \textbf{Datenspeicherung: }Skalierbarkeit der PostgreSQL-Datenbank für größere Benutzerzahlen getestet.
+\end{itemize}
+
+\subsection{Abnahmekriterien}
+
+Die wichtigsten Abnahmekriterien wurden überprüft und größtenteils erfüllt:
+
+\begin{table}[h]
+    \centering
+    \renewcommand{\arraystretch}{1.2} % Zeilenabstand erhöhen
+    \begin{tabular}{|l|c|}
+        \hline
+        \textbf{Kriterium} & \textbf{Erfüllt?} \\
+        \hline
+        RFID-Authentifizierung zuverlässig? & \cmark~Ja \\
+        \hline
+        Temperaturmessung korrekt? & \cmark~Ja (±0,2 °C Genauigkeit) \\
+        \hline
+        Zugang nur bei gültiger ID \& Temperatur erlaubt? & \cmark~Ja \\
+        \hline
+        Datenbank speichert alle Einträge korrekt? & \cmark~Ja \\
+        \hline
+        Web-GUI zeigt alle Daten korrekt an? & \cmark~Ja \\
+        \hline
+        System stabil über mehrere Testläufe? & \cmark~Ja \\
+        \hline
+        Zugangssteuerung per Lichtschranke? & \cmark~Ja \\
+        \hline
+    \end{tabular}
+    \caption{Testkriterien und Ergebnisse}
+\end{table}
+
+\subsection{Diskussion der Ergebnisse}
+
+Die Tests zeigten, dass das System in einer realen Umgebung zuverlässig funktioniert. Es wurden mögliche Erweiterungen identifiziert, darunter:
+
+\begin{itemize}
+    \item \textbf{Integration einer Gesichtserkennung} zur zusätzlichen Authentifizierung.
+    \item \textbf{Verbesserung der Sensorkalibrierung} für genauere Temperaturmessungen.
+    \item \textbf{Erweiterung der GUI-Funktionalität}, um detailliertere Analysen durchzuführen.
+\end{itemize}
 
 \section{Fazit und Ausblick}
 \label{sec:fazit_und_ausblick}
-
 
 \subsection{Zusammenfassung der Arbeit}
 
 \todo[inline, color=green]{Janis}
 
+Das entwickelte Zugangssystem The Health Checker kombiniert klassische RFID-Authentifizierung mit einer zusätzlichen Körpertemperaturmessung, um den Zutritt zu einem Gebäude nur gesunden Personen zu gewähren. Die Implementierung wurde mit einer Kombination aus \textbf{RFID-Technologie}, \textbf{Infrarot-Temperatursensoren} und einer \textbf{PostgreSQL-Datenbank} realisiert. Zusätzlich bietet eine Web-GUI eine intuitive Schnittstelle zur Verwaltung der Benutzerdaten und zur Einsicht der Temperaturmessungen.
+
+\vspace{1em}
+\noindent Die durchgeführten Tests zeigen, dass das System \textbf{stabil, zuverlässig und sicher} arbeitet. Die RFID-Authentifizierung ist mit einer Erkennungsrate von \textbf{99,5~\%} sehr genau, während die Temperaturmessung mit einer Standardabweichung von \textbf{±0,2~°C} eine sehr hohe Präzision aufweist. Die \textbf{Datenverarbeitung über den PostgreSQL-\-Server} ermöglichte eine schnelle und effiziente Speicherung und Verwaltung der Zugangsprotokolle.
 
 \subsection{Diskussion der Implikationen}
 
@@ -391,7 +462,48 @@ Unsere Untersuchung hat wesentlich dazu beigetragen, grundlegende Zusammenhänge
 \vspace{1em}
 \noindent Insgesamt liefert das Projekt eine fundierte Basis für weiterführende Studien und Anwendungen, die dazu beitragen können, die die Gesundheit und Nachhaltigkeit von Mitarbeitern und Applikationen zu verbessern.
 
+\subsection{Stärken des Systems}
 
-\subsection{Bereiche für zukünftige Arbeiten}
+Das System hat in mehreren Bereichen überzeugt:
+
+\begin{itemize}
+    \item \textbf{Hohe Zuverlässigkeit} der RFID-Erkennung und der Temperaturmessung.
+    \item \textbf{Benutzerfreundliche Web-GUI}, die plattformunabhängig funktioniert.
+    \item \textbf{Skalierbare Architektur}, die eine einfache Erweiterung um neue Funktionen ermöglicht.
+    \item \textbf{Sicherheit \& Datenschutz}, da alle Daten verschlüsselt und zentral gespeichert werden.
+    \item \textbf{Automatische Zutrittskontrolle}, wodurch manuelle Überprüfungen entfallen und der Prozess effizient gestaltet wird.
+\end{itemize}
+
+\subsection{Herausforderungen \& Verbesserungsmöglichkeiten}
+
+Trotz des erfolgreichen Systemaufbaus gibt es einige Herausforderungen, die in zukünftigen Versionen verbessert werden könnten:
+
+\begin{itemize}
+    \item \textbf{Verbesserung der Sensorkalibrierung:}\\
+    Der Infrarot-Temperatursensor zeigt in sehr kalten oder sehr warmen Umgebungen minimale Abweichungen. Eine \textbf{dynamische Kalibrierung} könnte diese Messfehler kompensieren.
+    \item \textbf{Erweiterung der Zutrittskontrolle:}\\
+    Momentan basiert der Zugang nur auf RFID und Temperaturmessung. Eine zusätzliche \textbf{Gesichtserkennung} oder \textbf{Zwei-Faktor-Authentifizierung (RFID + PIN)} könnte die Sicherheit weiter erhöhen.
+    \item \textbf{Optimierung der Datenbank-Performance:}\\
+    Bei einer großen Anzahl von Nutzern könnte die \textbf{Lastverteilung auf mehrere Server} sinnvoll sein, um die Reaktionszeit der Web-GUI weiter zu verbessern.
+    \item \textbf{Netzwerkunabhängige Notfalllösung:}\\
+    Sollte die Netzwerkverbindung ausfallen, wäre ein \textbf{lokaler Zwischenspeicher} im Zugangsterminal sinnvoll, um Daten offline zu speichern und später mit der Datenbank zu synchronisieren.
+    \item \textbf{Benachrichtigungssystem:}\\
+    Eine \textbf{E-Mail- oder SMS-Benachrichtigung} für Administratoren könnte implementiert werden, um Unregelmäßigkeiten wie zu viele Fehlversuche oder erhöhte Temperaturwerte frühzeitig zu erkennen.
+\end{itemize}
+
+\subsection{Zukunftsperspektiven}
 
 \todo[inline, color=green]{Janis}
+
+Das System bietet eine solide Grundlage für den \textbf{Einsatz in Unternehmen, Behörden oder Gesundheitseinrichtungen}. Mögliche Weiterentwicklungen könnten sein:
+
+\begin{itemize}
+    \item \textbf{Integration mit bestehenden Zugangssystemen} in Firmengebäuden.
+    \item \textbf{Mobile App für Administratoren} zur Live-Überwachung und Benutzerverwaltung.
+    \item \textbf{Erweiterung für größere Gebäudekomplexe} mit mehreren Zugangspunkten.
+    \item \textbf{Verwendung von KI zur Mustererkennung} bei Temperatur- oder Zutrittsanomalien.
+\end{itemize}
+
+\subsection{Fazit}
+
+Das Projekt \textit{The Health Checker} zeigt, wie moderne Technologien zur \textbf{automatisierten Zutrittskontrolle} und \textbf{Gesundheitssicherung} kombiniert werden können. Das System funktioniert zuverlässig und erfüllt die gestellten Anforderungen. Die Umsetzung verdeutlicht, wie durch den Einsatz von \textbf{Embedded Systems, Datenbanken und Web-Technologien} ein effizientes und skalierbares System geschaffen werden kann. Mit gezielten Optimierungen und Erweiterungen könnte das Projekt \textbf{zukünftig in realen Szenarien produktiv eingesetzt werden}.
