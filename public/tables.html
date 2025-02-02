@@ -1,72 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard (Tables)</title>
 
     <!-- Tailwind CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+            rel="stylesheet"
+    />
 
     <!-- Font Awesome -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"></script>
+    <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"
+    ></script>
 
     <!-- Custom Styles -->
     <style>
-        @import url('https://fonts.googleapis.com/css?family=Karla:400,700&display=swap');
-        .font-family-karla { font-family: karla; }
-        .bg-sidebar { background: #3d68ff; }
-        .active-nav-link { background: #1947ee; }
-        .nav-item:hover { background: #1947ee; }
-        .account-link:hover { background: #3d68ff; }
+        @import url("https://fonts.googleapis.com/css?family=Karla:400,700&display=swap");
+        .font-family-karla {
+            font-family: karla;
+        }
+        /* New Color Palette:
+           #b4b387 (180,179,135)
+           #eeddcc (238,221,204)
+           #778aab (119,138,171)
+           #bcaaaa (188,170,170)
+           #ddbb98 (221,187,152)
+        */
+        .bg-sidebar {
+            background: #778aab;
+        }
+        .active-nav-link {
+            background: #ddbb98;
+        }
+        .nav-item:hover {
+            background: #ddbb98;
+        }
+        .account-link:hover {
+            background: #778aab;
+        }
+        .header-bg {
+            background: #eeddcc;
+        }
+        .body-bg {
+            background: #b4b387;
+        }
+        /* Button styles */
+        .btn-logout {
+            background: #bcaaaa;
+        }
     </style>
 </head>
-<body class="bg-gray-100 font-family-karla flex">
+<body class="body-bg font-family-karla flex">
 <script>
     // Redirect to login if not logged in
-    // tables.html
-    const loggedInUser = localStorage.getItem('loggedInUser');
+    const loggedInUser = localStorage.getItem("loggedInUser");
     if (!loggedInUser) {
-        window.location.href = 'login.html';
+        window.location.href = "login.html";
     }
-
 </script>
 
 <!-- Sidebar -->
 <aside class="relative bg-sidebar h-screen w-64 hidden sm:block shadow-xl">
     <div class="p-6">
-        <a href="./tables.html" class="text-white text-3xl font-semibold uppercase hover:text-gray-300">Admin</a>
+        <a
+                href="./tables.html"
+                class="text-white text-3xl font-semibold uppercase hover:text-gray-300"
+        >
+            Admin
+        </a>
     </div>
     <nav class="text-white text-base font-semibold pt-3">
-        <a href="./index.html" class="flex items-center active-nav-link text-white py-4 pl-6 nav-item">
+        <a
+                href="./index.html"
+                class="flex items-center active-nav-link text-white py-4 pl-6 nav-item"
+        >
             <i class="fas fa-tachometer-alt mr-3"></i>
             Dashboard
         </a>
-        <a href="./tables.html" class="flex items-center active-nav-link text-white py-4 pl-6 nav-item">
+        <a
+                href="./tables.html"
+                class="flex items-center active-nav-link text-white py-4 pl-6 nav-item"
+        >
             <i class="fas fa-table mr-3"></i>
             Tables
         </a>
         <footer class="w-full text-right p-2 flex">
-            <button id="logout" class="bg-red-500 text-white px-6 py-3 mb-4 rounded-md">Logout</button>
+            <button
+                    id="logout"
+                    class="btn-logout text-white px-6 py-3 mb-4 rounded-md"
+            >
+                Logout
+            </button>
         </footer>
     </nav>
 </aside>
 
+<!-- Main Content -->
 <div class="w-full flex flex-col h-screen overflow-y-hidden">
     <!-- Header -->
-    <header class="w-full items-center bg-white py-2 px-6 hidden sm:flex">
+    <header class="w-full items-center header-bg py-2 px-6 hidden sm:flex">
         <div class="w-1/2"></div>
         <div class="relative w-1/2 flex justify-end">
-            <button class="relative p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:bg-gray-100 focus:text-gray-600 rounded-full">
+            <button
+                    class="relative p-2 text-gray-600 hover:bg-gray-200 hover:text-gray-800 focus:bg-gray-200 focus:text-gray-800 rounded-full"
+            >
                 <i class="fas fa-bell"></i>
             </button>
             <button class="relative p-2 ml-2">
-                <img class="w-8 h-8 rounded-full" style="width: 50px;" src="./assets/FH-Augsburg-Logo.svg.png" alt="User Avatar">
+                <img
+                        class="w-8 h-8 rounded-full"
+                        style="width: 50px;"
+                        src="./assets/FH-Augsburg-Logo.svg.png"
+                        alt="User Avatar"
+                />
             </button>
         </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- Main Content Area -->
     <div class="w-full overflow-x-hidden border-t flex flex-col">
         <main class="w-full flex-grow p-6">
             <h1 class="text-3xl text-black pb-6">User Table</h1>
@@ -76,24 +130,53 @@
                 <div class="p-6">
                     <h2 class="text-xl font-semibold mb-4">User Login Logs</h2>
                     <div class="mb-4">
-                        <input type="text" id="searchInput"
-                               class="w-full p-2 border rounded-lg"
-                               placeholder="Search logs...">
+                        <input
+                                type="text"
+                                id="searchInput"
+                                class="w-full p-2 border rounded-lg"
+                                placeholder="Search logs..."
+                        />
                     </div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="min-w-full">
                         <thead>
                         <tr class="bg-gray-100">
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">First Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Number</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Temperature</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Threshold Value</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Personal Number</th>
+                            <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Vorname Nachname
+                            </th>
+                            <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                ID Number
+                            </th>
+                            <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Email
+                            </th>
+                            <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Last Login
+                            </th>
+                            <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Temperature
+                            </th>
+                            <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Personal Number
+                            </th>
+                            <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Edit
+                            </th>
                         </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -104,22 +187,27 @@
             </div>
         </main>
 
-        <footer class="w-full bg-white text-right p-4">
-            Built by <a class="underline">Leopold Weber</a>.
+        <!-- Footer -->
+        <footer class="w-full header-bg   text-right p-4">
+            Built by <a target="_blank" href="http://www.leopoldweber.de" class="underline btn-primary">Leopold Weber</a>.
         </footer>
     </div>
 </div>
 
 <script>
-    document.getElementById('logout').addEventListener('click', () => {
-        localStorage.removeItem('loggedInUser');
-        window.location.href = 'login.html'; // Redirect to login
+    document.getElementById("logout").addEventListener("click", () => {
+        localStorage.removeItem("loggedInUser");
+        window.location.href = "login.html"; // Redirect to login
     });
 </script>
 
 <!-- Chart.js & PapaParse (if needed) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
+></script>
+<script
+        src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"
+></script>
 
 <!-- Your tables script (fetching employees, etc.) -->
 <script src="tables.js"></script>

@@ -50,7 +50,7 @@ async function displayEmployees() {
 
             if (colIndex === 4 && value !== 'N/A') { // Temperature column
                 const temp = parseFloat(employee.temperature);
-                const threshold = parseFloat(employee.threshold_value || 37.5); // Make sure threshold_value is available or provide a default.
+                const threshold = parseFloat(employee.threshold_value || 37.5); // Provide default threshold if not available.
                 td.classList.add(temp >= threshold ? 'text-red-600' : 'text-green-600');
             }
 
@@ -161,54 +161,75 @@ let currentEditRow = null;
 
 function openEditModal(employee) {
     currentEditRow = document.querySelector(`tr[data-id="${employee.id}"]`);
-    document.getElementById('editId').value = employee.id;
-    document.getElementById('editFirstName').value = employee.first_name;
-    document.getElementById('editLastName').value = employee.last_name;
-    document.getElementById('editEmail').value = employee.email;
-    document.getElementById('editPersonalNumber').value = employee.personal_number;
-    document.getElementById('editModal').classList.remove('hidden');
+    // Check if the edit elements exist before using them
+    const editIdEl = document.getElementById('editId');
+    const editFirstNameEl = document.getElementById('editFirstName');
+    const editLastNameEl = document.getElementById('editLastName');
+    const editEmailEl = document.getElementById('editEmail');
+    const editPersonalNumberEl = document.getElementById('editPersonalNumber');
+    const editModalEl = document.getElementById('editModal');
+
+    if (!editIdEl || !editFirstNameEl || !editLastNameEl || !editEmailEl || !editPersonalNumberEl || !editModalEl) {
+        console.error('Edit modal elements not found on this page.');
+        return;
+    }
+
+    editIdEl.value = employee.id;
+    editFirstNameEl.value = employee.first_name;
+    editLastNameEl.value = employee.last_name;
+    editEmailEl.value = employee.email;
+    editPersonalNumberEl.value = employee.personal_number;
+    editModalEl.classList.remove('hidden');
 }
 
 function closeEditModal() {
-    document.getElementById('editModal').classList.add('hidden');
+    const editModalEl = document.getElementById('editModal');
+    if (editModalEl) {
+        editModalEl.classList.add('hidden');
+    }
     currentEditRow = null;
 }
 
-document.getElementById('editForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+// Only attach the submit listener if the edit form exists.
+const editFormElement = document.getElementById('editForm');
+if (editFormElement) {
+    editFormElement.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    const updatedData = {
-        first_name: document.getElementById('editFirstName').value,
-        last_name: document.getElementById('editLastName').value,
-        email: document.getElementById('editEmail').value,
-        personal_number: document.getElementById('editPersonalNumber').value
-    };
+        const updatedData = {
+            first_name: document.getElementById('editFirstName').value,
+            last_name: document.getElementById('editLastName').value,
+            email: document.getElementById('editEmail').value,
+            personal_number: document.getElementById('editPersonalNumber').value
+        };
 
-    try {
-        const response = await fetch(
-            `http://localhost:3001/api/employees/${document.getElementById('editId').value}`,
-            {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedData)
-            }
-        );
+        try {
+            const response = await fetch(
+                `http://localhost:3001/api/employees/${document.getElementById('editId').value}`,
+                {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedData)
+                }
+            );
 
-        if (!response.ok) throw new Error('Update failed');
+            if (!response.ok) throw new Error('Update failed');
 
-        // Update the table row
-        const cells = currentEditRow.cells;
-        cells[0].textContent = `${updatedData.first_name} ${updatedData.last_name}`;
-        cells[2].textContent = updatedData.email;
-        cells[5].textContent = updatedData.personal_number;
+            // Update the table row (make sure the correct cells are updated)
+            const cells = currentEditRow.cells;
+            cells[0].textContent = `${updatedData.first_name} ${updatedData.last_name}`;
+            // Adjust cell indices if necessary based on your table structure:
+            cells[2].textContent = updatedData.email;
+            cells[5].textContent = updatedData.personal_number;
 
-        closeEditModal();
-        showStatus('User updated successfully!', 'success');
-    } catch (error) {
-        console.error('Update error:', error);
-        showStatus('Failed to update user', 'error');
-    }
-});
+            closeEditModal();
+            showStatus('User updated successfully!', 'success');
+        } catch (error) {
+            console.error('Update error:', error);
+            showStatus('Failed to update user', 'error');
+        }
+    });
+}
 
 /**
  * Status message handling
@@ -216,6 +237,11 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
 function showStatus(message, type) {
     const statusAlert = document.getElementById('statusAlert');
     const statusMessage = document.getElementById('statusMessage');
+
+    if (!statusAlert || !statusMessage) {
+        console.error('Status elements not found.');
+        return;
+    }
 
     statusAlert.className = `mb-4 p-4 rounded-md ${
         type === 'success'
@@ -285,9 +311,6 @@ function renderCharts(employees) {
 /**
  * User management form handling
  */
-/**
- * User management form handling
- */
 function setupAddUserForm() {
     const form = document.getElementById('addUserForm');
     if (!form) return;
@@ -325,7 +348,6 @@ function setupAddUserForm() {
     });
 }
 
-
 /**
  * Logout handling
  */
@@ -348,10 +370,13 @@ function init() {
     setupLogout();
     setupAddUserForm();
 
-    // Close modal on outside click
-    document.getElementById('editModal').addEventListener('click', (e) => {
-        if (e.target.id === 'editModal') closeEditModal();
-    });
+    // Only attach the modal click listener if the element exists.
+    const editModalEl = document.getElementById('editModal');
+    if (editModalEl) {
+        editModalEl.addEventListener('click', (e) => {
+            if (e.target.id === 'editModal') closeEditModal();
+        });
+    }
 }
 
 if (!window.tableInitialized) {
