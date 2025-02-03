@@ -1,19 +1,15 @@
 
 \section{Zusammenfassung}\label{sec:zusammenfassung}
 
-\todo[inline, color=green]{Jan}
-
-Diese Dokumentation fasst die Aufgabenstellung, Rahmenbedingungen sowie Abnahme- und Lieferbedingungen unseres Projekts zusammen. Es dient als Leitfaden für die Zusammenarbeit zwischen unserem Team und dem Auftraggeber, um sicherzustellen, dass alle Erwartungen klar erfüllt sind. Unser Ziel ist es, ein Zugangssystem zu entwickeln, das die klassische RFID-Authentifizierung um eine Temperaturmessung erweitert. Dabei soll am Eingang eines Firmengebäudes ein Terminal installiert werden, das die RFID-Authentifizierung und die Temperaturmessung durchführt. Die Systemkomponenten sollen über ein Firmennetzwerk mit einem zentralen Masterserver verbunden werden. Dieser soll als Steuereinheit für die Verwaltung von Benutzerinformationen, Zugangsprotokollen und Temperaturgrenzwerten dienen.
+Diese Dokumentation fasst die Aufgabenstellung, Rahmenbedingungen sowie Ab\-nah\-me- und Lieferbedingungen unseres Projekts zusammen. Es dient als Leitfaden für die Zusammenarbeit zwischen unserem Team und dem Auftraggeber, um sicherzustellen, dass alle Erwartungen klar erfüllt sind. Unser Ziel ist es, ein Zugangssystem zu entwickeln, das die klassische RFID-Authentifizierung um eine Temperaturmessung erweitert. Dabei soll am Eingang eines Firmengebäudes ein Terminal installiert werden, das die RFID-Authentifizierung und die Temperaturmessung durchführt. Die Systemkomponenten sollen über ein Firmennetzwerk mit einem zentralen Masterserver verbunden werden. Dieser soll als Steuereinheit für die Verwaltung von Benutzerinformationen, Zugangsprotokollen und Temperaturgrenzwerten dienen.
 
 \vspace{1em}
-\noindent Unser Team besteht aus vier Mitgliedern: Simon Schneider, unser Teamleiter, koordiniert das Projekt. Janis Preiß kümmert sich um Hardware und Elektrik, Leopold Weber entwickelt die Benutzeroberfläche, und Jan-Niclas Fenger ist für die Prozessprogrammierung verantwortlich.\todo{Wer, wo?} Zusammen bringen wir eine Kombination aus Fachwissen, IT-Kenntnissen und Organisationstalent mit.
+\noindent Unser Team besteht aus vier Mitgliedern: Janis Preiß, unser Teamleiter, koordiniert das Projekt und war für die Elektrik zuständig. Jan-Niclas Fenger kümmert sich um Hardware und Elektrik, Leopold Weber entwickelt die Benutzeroberfläche, und Simon Schneider ist für die Prozessprogrammierung verantwortlich. Zusammen bringen wir eine Kombination aus Fachwissen, IT-Kenntnissen und Organisationstalent mit.
 
 \vspace{1em}
-\noindent Für das Projekt hatten wir vordergründlich Zugang zu einem Raspberry Pi, einem Wemos Modul und einem Infrarot-Temperatursensor.\todo{Passt das so?} Mit einem Budget von 50 Euro konnten wir alle notwendigen Komponenten beschaffen. Dieses Projekt gab uns die Möglichkeit, theoretisches Wissen in der IT und Elektrotechnik praktisch anzuwenden. Im Folgenden erklären wir, wie wir dieses Projekt erfolgreich umgesetzt haben.
+\noindent Für das Projekt hatten wir vordergründig Zugang zu einem Raspberry Pi, einem Wemos Modul und einem Infrarot-Temperatursensor. Mit einem Budget von 50 Euro konnten wir alle notwendigen Komponenten beschaffen. Dieses Projekt gab uns die Möglichkeit, theoretisches Wissen in der IT und Elektrotechnik praktisch anzuwenden. Im Folgenden erklären wir, wie wir dieses Projekt erfolgreich umgesetzt haben.
 
 \section{Einleitung}\label{sec:einleitung}
-
-\todo[inline, color=green]{Jan}
 
 \subsection{Kontext/Hintergrund}
 
@@ -46,17 +42,14 @@ Diese Dokumentation beginnt mit einer ausführlichen Beschreibung unserer Method
 
 \section{Methodik}\label{sec:methodik}
 
-\todo[inline, color=green]{Simon}
-
-
 \subsection{Prinzipienschaltbild}\label{subsec:prinzipienschaltbild}
 
-Der prinzipielle Aufbau des Projekts wurde zuerst erstellt und in einem Blockdiagramm dargestellt, dass die verschiedenen Komponenten und deren Verbindungen veranschaulicht. Dieses Diagramm zeigt den Fluss des Zugangskontrollsystem von Authentifizierung und Temperaturmessung über das Schreiben in die Datenbank bis hin zur Ansteuerung des Drehkreuzes und der Lichtschranken.
-\todo{Bildgröße am Ende anpassen}
+Der prinzipielle Aufbau des Projekts wurde zuerst erstellt und in einem Blockdiagramm dargestellt, dass die verschiedenen Komponenten und deren Verbindungen veranschaulicht. Dieses Diagramm zeigt den Fluss des Zugangskontrollsystems von Authentifizierung und Temperaturmessung über das Schreiben in die Datenbank bis hin zur Ansteuerung des Drehkreuzes und der Lichtschranken.
 
+\vspace{1em}
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.4\linewidth]{figures/Prinzipienschaltbild.png}
+	\includegraphics[width=0.79\linewidth]{figures/Prinzipienschaltbild.png}
 	\caption[Prinzipienschaltbild]{Schematischer Aufbau des Projekts}\label{fig:prinzipienschaltbild}
 \end{figure}
 
@@ -124,11 +117,11 @@ Den Startpunkt des Zugangssystems stellt der Raspberry-Pi mit Display und seinen
 
 \subsubsection{Wemos-Modul}
 
-Nach erfolgreicher Authentifizierung und Temperaturmessung wird die Eingangslichtschranke für eine gewisse Zeit aktiviert, welche bei nicht durchschreiten deaktiviert wird. Wird aber die Lichtschranke durchbrochen, so dreht sich der Steppermotor, auf dem ein Drehkreuz montiert wurde. Am Ausgang ist ebenso ein Lichtschranke montiert, welche dauerhaft aktiv ist. Diese sorgt erwartungsgemäß dafür, dass der Motor sich in die Gegenrichtung dreht. Die drei Komponenten sind zur einfachen Ansteuerung an ein Wemos-Modul angeschlossen.
+Nach erfolgreicher Authentifizierung und Temperaturmessung wird die Eingangslichtschranke für eine gewisse Zeit aktiviert, welche bei nicht durchschreiten deaktiviert wird. Wird aber die Lichtschranke durchbrochen, so dreht sich der Steppermotor, auf dem ein Drehkreuz montiert wurde. Am Ausgang ist ebenso eine Lichtschranke montiert, welche dauerhaft aktiv ist. Diese sorgt erwartungsgemäß dafür, dass der Motor sich in die Gegenrichtung dreht. Die drei Komponenten sind zur einfachen Ansteuerung an ein Wemos-Modul angeschlossen.
 
 \subsubsection{Web-Datenbank-Server}
 
-Für die Speicherung und Verwaltung der Benutzerzugänge und Grenzwerte wurde ein Web-Datenbank-Server aufgestzt. Hierbei wurden die beiden Aufgbaben in einem Server vereint, da dies eine noch einfacheren Abgleich der Nutzerdaten ermöglicht und es auch Standard bei einer solchen Art von Systemen darstellt.
+Für die Speicherung und Verwaltung der Benutzerzugänge und Grenzwerte wurde ein Web-Datenbank-Server aufgesetzt. Hierbei wurden die beiden Aufgaben in einem Server vereint, da dies eine noch einfacheren Abgleich der Nutzerdaten ermöglicht und es auch Standard bei einer solchen Art von Systemen darstellt.
 
 \subsubsection{Zusammenfassung}
 
@@ -156,9 +149,6 @@ Der Abstand wird durch einen Ultraschallsensor gemessen, der die Entfernung zum 
 
 \section{Software und User Interface}\label{sec:software_und_user_interface}
 
-\todo[inline, color=green]{Leopold}
-
-
 \subsection{Programmstruktur}\label{subsec:programmstruktur}
 
 Die Software in diesem Projekt setzt sich aus mehreren Programmen zusammen. Die genaue Funktionsweise und Interaktionen der einzelnen Programme miteinander werden nun im Folgenden erklärt. Eine weiterführende Dokumentation sowie der Quellcode der Software sind auf folgendem GitHub Repository hinterlegt:\\ \url{https://github.com/LeoWeber1/Semester5_Adminpage}
@@ -169,7 +159,7 @@ Die Software in diesem Projekt setzt sich aus mehreren Programmen zusammen. Die 
 
 \subsubsection{Einführung}
 
-Das Datenbanksystem (DBS) wurde ursprünglich mit SQLite3 implementiert, da es relativ einfach und intuitiv zu handhaben ist benutz haben wir eine SQL Row based Datenbank. Allerdings ergeben sich hierbei Probleme bei mehrfachen Zugriffen auf die Datenbank. Um diese Herausforderungen zu lösen, wurde auf ein Server-Client-Modell mit PostgreSQL umgestellt.
+Das Datenbanksystem (DBS) wurde ursprünglich mit SQLite3 implementiert, da es relativ einfach und intuitiv zu handhaben ist. Benutzt haben wir eine SQL Row based Datenbank. Allerdings ergeben sich hierbei Probleme bei mehrfachen Zugriffen auf die Datenbank. Um diese Herausforderungen zu lösen, wurde auf ein Server-Client-Modell mit PostgreSQL umgestellt.
 
 
 \subsubsection{Problemstellung bei SQLite3}
@@ -195,10 +185,9 @@ Aktuell läuft der PostgreSQL-Server auf einem Raspberry Pi. Eine zukünftige We
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.4\linewidth]{figures/Schematischer Aufbau.jpeg}
+	\includegraphics[width=0.7\linewidth]{figures/Schematischer Aufbau.jpeg}
 	\caption[Schematischer Aufbau]{Schematischer Aufbau des Datenbanksystems}\label{fig:schematischer_aufbau}
 \end{figure}
-\todo{Bildgröße am Ende anpassen}
 
 
 \subsubsection{Zusammenfassung}\label{subsubsec:zusammenfassung}
@@ -208,7 +197,7 @@ Durch PostgreSQL wird ein robustes und flexibles Datenbanksystem geschaffen, das
 
 \subsection{Technologien und Architektur (Webanwendung)}
 
-Für die Umsetzung der Webanwendung haben wir uns für einen aktuellen Technologie-Stack entschieden, der uns viel Flexibilität und eine klare Struktur bietet:
+Für die Umsetzung der Webanwendung haben wir uns für einen aktuellen Tech\-no\-lo\-gie-Stack entschieden, der uns viel Flexibilität und eine klare Struktur bietet:
 
 \begin{itemize}
     \item \textbf{HTML5 \& CSS3:}\newline Die Grundstruktur der Anwendung basiert auf HTML5. Für das Styling nutzen wir CSS3 in Kombination mit Tailwind CSS, was uns ein responsives und ansprechendes Design ermöglicht.
@@ -229,7 +218,7 @@ Das Benutzerterminal selbst setzt einen Fokus auf Performance und aktuelle Techn
     \item \textbf{PyQt5:}\\
     PyQt5 ist ein leistungsfähiges GUI-Framework, welches eine umfangreiche Sammlung an Widgets besitzt und die einfache Erstellung moderner, plattformübergreifender Benutzeroberflächen ermöglicht.
     \item \textbf{MQTT:}\\
-    Für den Abgleich der Benutzerdaten wird MQTT eingestzt. Das leichtgewichtige und effiziente Prokoll bietet Datenübertragung in Echtzeit. Somit ist eine schnelle und zuverlässige Kommunikation zwischen dem Terminal und dem Datenbankserver möglich. 
+    Für den Abgleich der Benutzerdaten wird MQTT eingesetzt. Das leichtgewichtige und effiziente Protokoll bietet Datenübertragung in Echtzeit. Somit ist eine schnelle und zuverlässige Kommunikation zwischen dem Terminal und dem Datenbankserver möglich. 
 \end{itemize}
 
 \subsection{Benutzerinterface und Funktionalitäten (Webanwendung)}
@@ -238,10 +227,9 @@ Das Benutzerinterface ist in mehrere Bereiche unterteilt, um die Bedienung mögl
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.4\linewidth]{figures/GUI.jpeg}
+	\includegraphics[width=0.7\linewidth]{figures/GUI.jpeg}
 	\caption[GUI]{Ausschnitt aus der GUI der Webanwendung}\label{fig:gui}
 \end{figure}
-\todo{Bildgröße am Ende anpassen}
 
 Über eine ständig sichtbare Sidebar mit passenden Icons gelangt man schnell zu wichtigen Bereichen wie dem Dashboard oder den Tabellenansichten. Im Dashboard bekommt man einen Überblick über wichtige Kennzahlen – etwa die Anzahl der Nutzer, die Durchschnittstemperatur und die Login-Aktivitäten – die in Echtzeit aktualisiert werden. 
 
@@ -256,7 +244,7 @@ Das Benutzerinterface ist in mehrere Bereiche unterteilt, um die Bedienung mögl
 
 \vspace{1em}
 \noindent\textbf{Fazit:}\newline
-Durch die Kombination dieser Technologien entstand eine benutzerfreundliche Webanwendung, die alle wichtigen Daten zentral anzeigt und verwaltet. Die modulare Architektur erlaubt zudem eine einfache Erweiterung, falls zukünftig weitere Anpassungen notwendig werden falls unser Projekt jemals in Produktion gehen würde.
+Durch die Kombination dieser Technologien entstand eine benutzerfreundliche Webanwendung, die alle wichtigen Daten zentral anzeigt und verwaltet. Die modulare Architektur erlaubt zudem eine einfache Erweiterung, falls zukünftig weitere Anpassungen notwendig werden, falls unser Projekt jemals in Produktion gehen würde.
 
 \subsection{Benutzerinterface und Funktionalitäten (Benutzerterminal)}
 
@@ -264,10 +252,9 @@ Im Benutzerterminal wurde ebenso das Interface in mehrere Bereiche aufgeteilt.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.4\linewidth]{figures/GUI Benutzerterminal.jpg}
-	\caption[GUI Benutzerterminal]{Ausschnitt aus der GUI des Benutzerterminals}\label{fig:gui}
+	\includegraphics[width=0.8\linewidth]{figures/GUI Benutzerterminal.jpg}
+	\caption[GUI Benutzerterminal]{Ausschnitt aus der GUI des Benutzerterminals}\label{fig:gui_userterminal}
 \end{figure}
-\todo{Bildgröße am Ende anpassen}
 
 \vspace{1em}
 \noindent Im linken Bereich werden aktuelle Informationen zum aktuellen Mitarbeiter angezeigt, wie den Namen und die Personalnummer sowie wie weit der Zugangsablauf aktuell ist oder ob bei einem Schritt ein Fehler aufgetreten ist. Somit kann der Mitarbeiter bei einer Verweigerung des Zutritts erkennen, woran es gescheitert ist.
@@ -278,7 +265,7 @@ Allgemeine Informationen zum Unternehmen finden im rechten Bereich Platz, um noc
 
 \vspace{1em}
 \noindent \textbf{Fazit: }\\
-Die Mischung aus einfachen und trotzdem klar verständlichen Informationen stellt eine gute und leicht verständliche Bedienoberfläche da. Dies ermöglicht auch weniger technikvisierten Mitarbeitern einen leichten Umgang mit dem Zungangskontrollsystem.
+Die Mischung aus einfachen und trotzdem klar verständlichen Informationen stellt eine gute und leicht verständliche Bedienoberfläche dar. Dies ermöglicht auch weniger Technik-visierten Mitarbeitern einen leichten Umgang mit dem Zugangskontrollsystem.
 
 \subsection{API-Dokumentation}\label{subsec:api-dokumentation}
 
@@ -312,8 +299,7 @@ Die API unterstützt die Benutzer- und Mitarbeiterverwaltung sowie die Kommunika
         \item \textit{400 Bad Request: }Benutzername existiert bereits oder erforderliche Felder fehlen
         \item \textit{500 Internal Server Error: }Fehler beim Speichern in der Datenbank
     \end{itemize}
-\end{itemize}
-%\todo{Code noch besser formatieren}
+\end{itemize}\clearpage
 \textbf{Login}
 \begin{itemize}
     \item \textbf{Methode: }POST 
@@ -359,7 +345,7 @@ Die API unterstützt die Benutzer- und Mitarbeiterverwaltung sowie die Kommunika
         \item \textit{500 Internal Server Error: }Fehler beim Abrufen der Daten
     \end{itemize}
 \end{itemize}
-
+\clearpage
 \noindent\textbf{Neuen Mitarbeiter hinzufügen}
 \begin{itemize}
     \item \textbf{Methode: }POST 
@@ -383,7 +369,6 @@ Die API unterstützt die Benutzer- und Mitarbeiterverwaltung sowie die Kommunika
 
 
 \section{Ergebnisse und Diskussion}
-\label{sec:ergebnisse_und_diskussion}
 
 \subsection{Messwerte \& Diskussion}
 
@@ -392,9 +377,9 @@ Die API unterstützt die Benutzer- und Mitarbeiterverwaltung sowie die Kommunika
 Im Projekt wurden verschiedene Messwerte erfasst, validiert und analysiert:
 
 \begin{itemize}
-    \item \textbf{RFID-Authentifizierungen: }Erfolgsquote von \textbf{99,5\%} bei der Erkennung gültiger IDs.
+    \item \textbf{RFID-Authentifizierungen: }Erfolgsquote von \textbf{99,5~\%} bei der Erkennung gültiger IDs.
     \item \textbf{Temperaturmessungen: }Durchschnittlicher Messwert von \textbf{36,7 °C}, mit einer Standardabweichung von \textbf{0,2 °C}.
-    \item \textbf{Zugangsentscheidungen: }Erfolgsquote bei korrekten Freigaben lag bei \textbf{98,8\%}.
+    \item \textbf{Zugangsentscheidungen: }Erfolgsquote bei korrekten Freigaben lag bei \textbf{98,8~\%}.
 \end{itemize}
 
 \subsubsection{Analyse der Messgrößen}
@@ -414,7 +399,6 @@ Die wichtigsten Messwerte wurden analysiert:
     \item \textbf{Netzwerkanbindung: }Verzögerungen durch WLAN-Probleme, Lösung durch kabelgebundene Alternativen in zukünftigen Versionen.
     \item \textbf{Datenspeicherung: }Skalierbarkeit der PostgreSQL-Datenbank für größere Benutzerzahlen getestet.
 \end{itemize}
-\clearpage
 
 \subsection{Abnahmekriterien}
 
@@ -460,8 +444,6 @@ Die Tests zeigten, dass das System in einer realen Umgebung zuverlässig funktio
 
 \subsection{Zusammenfassung der Arbeit}
 
-\todo[inline, color=green]{Janis}
-
 Das entwickelte Zugangssystem The Health Checker kombiniert klassische RFID-Authentifizierung mit einer zusätzlichen Körpertemperaturmessung, um den Zutritt zu einem Gebäude nur gesunden Personen zu gewähren. Die Implementierung wurde mit einer Kombination aus \textbf{RFID-Technologie}, \textbf{Infrarot-Temperatursensoren} und einer \textbf{PostgreSQL-Datenbank} realisiert. Zusätzlich bietet eine Web-GUI eine intuitive Schnittstelle zur Verwaltung der Benutzerdaten und zur Einsicht der Temperaturmessungen.
 
 \vspace{1em}
@@ -469,7 +451,6 @@ Das entwickelte Zugangssystem The Health Checker kombiniert klassische RFID-Auth
 
 \subsection{Diskussion der Implikationen}
 
-\todo[inline, color=green]{Leopold}
 Unsere Untersuchung hat wesentlich dazu beigetragen, grundlegende Zusammenhänge in der Informatik und Elektrotechnik besser zu verstehen. Besonders hervorzuheben ist dabei die Anwendung eines webbasierten Systems welches in Zusammenhang mit einem lokalen Prototyp zusammenspielt. Die PostgreSQL Datenbank könnte durch Zukunftssicherheit auch direkt in Produktion deployt werden. Dasselbe gilt (mit Ausnahme der Authentizität) auch für die Webanwendung.
 
 \vspace{1em}
@@ -509,9 +490,7 @@ Trotz des erfolgreichen Systemaufbaus gibt es einige Herausforderungen, die in z
 
 \subsection{Zukunftsperspektiven}
 
-\todo[inline, color=green]{Janis}
-
-Das System bietet eine solide Grundlage für den \textbf{Einsatz in Unternehmen, Behörden oder Gesundheitseinrichtungen}. Mögliche Weiterentwicklungen könnten sein:
+Das System bietet eine solide Grundlage für den \textbf{Einsatz in Unternehmen, Behörden oder Gesundheitseinrichtungen}. Mögliche Wei\-ter\-ent\-wick\-lung\-en könnten sein:
 
 \begin{itemize}
     \item \textbf{Integration mit bestehenden Zugangssystemen} in Firmengebäuden.
